@@ -1,4 +1,4 @@
-# Groww mutual fund facts assistant
+# Groww Assistant (mutual fund facts assistant)
 
 A facts-only assistant for four HDFC Mutual Fund Direct Growth schemes, plus the Groww steps for downloading a mutual-fund capital-gains statement. It quotes the loaded pages. It does not give investment advice.
 
