@@ -1,11 +1,11 @@
-"""Command line entry points. Later phases fill in each command."""
+"""Command line entry points for ingest, one question, and the sample file."""
 
 from __future__ import annotations
 
 import argparse
 import sys
 
-COMMANDS = ("scrape", "load", "chunk", "embed", "index", "pipeline", "ask")
+COMMANDS = ("scrape", "load", "chunk", "embed", "index", "pipeline", "ask", "sample")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -66,6 +66,10 @@ def main(argv: list[str] | None = None) -> int:
         print(result["answer"])
         print(result["trace_path"])
         return 0
+    if args.command == "sample":
+        from app.sample_qa import run as sample
+
+        return sample()
     print(f"not implemented: {args.command}", file=sys.stderr)
     return 2
 

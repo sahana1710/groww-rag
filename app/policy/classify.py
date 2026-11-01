@@ -148,7 +148,7 @@ def classify(question: str, settings: Settings) -> Decision:
     if any(phrase in text for phrase in JAILBREAK):
         return decision("refuse", "jailbreak")
     if _other_amc(text):
-        return decision("refuse", "out_of_corpus")
+        return Decision("refuse", "out_of_corpus", "", (), redacted)
     if any(_has(text, phrase) for phrase in PERFORMANCE):
         return decision("refuse", "performance")
 

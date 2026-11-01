@@ -110,7 +110,8 @@ def scheme_chunks(document: dict, params: dict) -> tuple[list[dict], list[str]]:
 
     texts: dict[str, str] = {}
     if "expense_ratio" in facts:
-        texts["expense_ratio"] = f"Expense ratio: {_percent(facts['expense_ratio'])} for {name}, Direct Plan Growth."
+        plan_label = "Direct Plan Growth" if not plan or plan.lower() == "direct" else plan
+        texts["expense_ratio"] = f"Expense ratio: {_percent(facts['expense_ratio'])} for {name}, {plan_label}."
     if "exit_load" in facts:
         texts["exit_load"] = f"Exit load: {_flat(facts['exit_load'])}"
     if "min_sip_investment" in facts:
