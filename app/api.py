@@ -19,7 +19,8 @@ def _warm_encoder() -> None:
         return
     from app.retrieve.search import _model
 
-    _model(load_settings().embedding_model)
+    settings = load_settings()
+    _model(settings.embedding_model, repo_root())
 
 
 app = FastAPI(title="Groww mutual fund facts assistant", on_startup=[_warm_encoder])

@@ -2,7 +2,12 @@
 .env.*
 !.env.example
 .venv/
-data/
+data/raw/
+data/chroma/
+data/traces/
+data/documents/
+data/chunks/missing.json
+models/
 __pycache__/
 .pytest_cache/
 *.pyc
