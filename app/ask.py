@@ -70,12 +70,19 @@ def _evidence(hits: list[Hit], fact_types: tuple[str, ...], relaxed: bool) -> li
 
 def _trace(root: Path, payload: dict) -> str:
     folder = traces_dir(root)
-    folder.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     name = f"{stamp}-{uuid.uuid4().hex[:4]}.json"
-    path = folder / name
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    return f"data/traces/{name}"
+    body = json.dumps(payload, indent=2) + "\n"
+    for candidate in (folder, Path("/tmp/traces")):
+        try:
+            candidate.mkdir(parents=True, exist_ok=True)
+            (candidate / name).write_text(body, encoding="utf-8")
+        except OSError:
+            continue
+        if candidate == folder:
+            return f"data/traces/{name}"
+        return ""
+    return ""
 
 
 def _response(payload: dict, trace_path: str) -> dict:
