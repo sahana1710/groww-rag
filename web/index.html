@@ -219,7 +219,7 @@
     .active-label { font-size: 0.6875rem; font-weight: 600; color: var(--mint); }
     .float-questions {
       flex: none;
-      padding: 0.85rem 1.5rem 0.2rem;
+      padding: 0.85rem 1.5rem 0.75rem;
     }
     .float-questions:has(.suggestions[hidden]),
     .float-questions:has(.suggestions:empty) { display: none; }
@@ -698,7 +698,7 @@
 
     function paintPrompts() {
       const scheme = catalog.schemes.find((item) => item.id === schemePick.value);
-      const questions = scheme.questions.filter((question) => !hiddenPrompts.includes(question.text)).slice(0, 3);
+      const questions = scheme.questions.slice(0, 3).filter((question) => !hiddenPrompts.includes(question.text));
       promptsEl.replaceChildren(...questions.map((question) => chip(question, question === catalog.help)));
       promptsEl.hidden = questions.length === 0;
     }
