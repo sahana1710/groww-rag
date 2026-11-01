@@ -17,6 +17,3 @@ dependencies = [
 
 [tool.vercel]
 entrypoint = "app.api:app"
-
-[tool.vercel.scripts]
-build = "python scripts/cache_model.py"

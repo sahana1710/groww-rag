@@ -37,7 +37,12 @@ class Hit:
 
 
 def cache_dir(root: Path) -> Path:
-    """Prefer the project cache. Use /tmp when the deploy filesystem is read-only."""
+    """Keep the model out of the deploy bundle. Vercel downloads it into /tmp on first use."""
+    if os.environ.get("VERCEL"):
+        path = Path("/tmp/fastembed")
+        path.mkdir(parents=True, exist_ok=True)
+        os.environ["FASTEMBED_CACHE_PATH"] = str(path)
+        return path
     path = root / "models" / "fastembed"
     try:
         path.mkdir(parents=True, exist_ok=True)
