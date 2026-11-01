@@ -1,0 +1,26 @@
+advice: |
+  Facts only. I can’t tell you whether to buy, sell, or hold a scheme. I can quote published facts such as expense ratio, exit load, minimum SIP, lock-in, riskometer, and benchmark for the four HDFC Direct Growth schemes in this demo.
+  Source: {source_url}
+  Last updated from sources: {fetched_at}.
+performance: |
+  Facts only. I don’t calculate or compare returns. The official factsheet on the scheme page is the right place for those figures, read with the date and the benchmark.
+  Source: {source_url}
+  Last updated from sources: {fetched_at}.
+out_of_corpus: |
+  This demo only covers HDFC Large Cap, HDFC Flexi Cap, HDFC ELSS Tax Saver, and HDFC Mid Cap, all Direct Growth, plus how to download a capital-gains statement. I don’t have a sourced figure for that scheme.
+  Source: {source_url}
+  Last updated from sources: {fetched_at}.
+pii: |
+  Facts only. Please don’t share PAN, Aadhaar, account numbers, OTPs, email, or phone numbers here. I can’t open your account. You download statements yourself from Groww’s reports section.
+  Source: {source_url}
+  Last updated from sources: {fetched_at}.
+insufficient_evidence: |
+  I couldn’t find that fact in the pages loaded for this demo, so I won’t guess it. The scheme page is the place to confirm.
+  Source: {source_url}
+  Last updated from sources: {fetched_at}.
+narrow: |
+  Which scheme do you mean: HDFC Large Cap Fund Direct Growth, HDFC Flexi Cap Direct Plan Growth, HDFC ELSS Tax Saver Fund Direct Plan Growth, or HDFC Mid Cap Fund Direct Growth?
+  Source: {source_url}
+  Last updated from sources: {fetched_at}.
+provider_error: |
+  The assistant could not complete that question. Your question was not sent to a fund-recommendation system.

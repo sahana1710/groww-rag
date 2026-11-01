@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HDFC Mutual Fund facts</title>
+  <style>
+    body {
+      font-family: "Iowan Old Style", Palatino, Georgia, serif;
+      margin: 0;
+      color: #1c1c1c;
+      background: #f7f5f2;
+    }
+    main {
+      max-width: 40rem;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin: 0 0 1rem;
+    }
+    .disclaimer {
+      margin: 0 0 1.5rem;
+      padding: 0.75rem 1rem;
+      background: #fff;
+      border: 1px solid #d9d3cb;
+      font-size: 0.95rem;
+    }
+    .examples {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin: 0 0 1rem;
+    }
+    button, input {
+      font: inherit;
+    }
+    .examples button, form button {
+      text-align: left;
+      background: #fff;
+      border: 1px solid #1c1c1c;
+      padding: 0.55rem 0.75rem;
+      cursor: pointer;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    input {
+      padding: 0.55rem 0.75rem;
+      border: 1px solid #1c1c1c;
+      background: #fff;
+    }
+    #answer {
+      min-height: 1.5rem;
+      margin-top: 1.25rem;
+      white-space: pre-wrap;
+    }
+    a {
+      color: inherit;
+    }
+    #answer a {
+      display: block;
+      margin-top: 0.75rem;
+    }
+    details {
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Ask a factual question about HDFC Large Cap, Flexi Cap, ELSS Tax Saver, or Mid Cap — Direct Growth.</h1>
+    <p class="disclaimer">Facts only. No investment advice. Answers are short quotations of public pages on HDFC Mutual Fund schemes (Direct Plan, Growth) and official help or regulator pages. They are not a recommendation to buy, sell, or hold any scheme. Past performance is not shown here on purpose. Check the linked page before you act.</p>
+    <div class="examples">
+      <button type="button">What is the expense ratio of HDFC Large Cap Fund Direct Growth?</button>
+      <button type="button">What is the lock-in on HDFC ELSS Tax Saver Fund Direct Plan Growth?</button>
+      <button type="button">How do I download a capital-gains statement on Groww?</button>
+    </div>
+    <form>
+      <input name="question" placeholder="Ask a fact. No investment advice." autocomplete="off">
+      <button type="submit">Ask</button>
+    </form>
+    <div id="answer" aria-live="polite"></div>
+    <details>
+      <summary>How this answer was produced</summary>
+      <pre id="inspector"></pre>
+    </details>
+  </main>
+  <script>
+    const input = document.querySelector("input");
+    const answer = document.getElementById("answer");
+    const inspector = document.getElementById("inspector");
+
+    document.querySelectorAll(".examples button").forEach((button) => {
+      button.addEventListener("click", () => {
+        input.value = button.textContent;
+        input.focus();
+      });
+    });
+
+    async function showReady() {
+      const response = await fetch("/api/health");
+      if (response.status === 503) {
+        answer.textContent = "Index is not ready.";
+      }
+    }
+
+    function render(payload) {
+      answer.replaceChildren();
+      const lines = (payload.answer || "").split("\n").map((line) => line.trim()).filter(Boolean);
+      const body = lines.filter((line) => !line.startsWith("Source:") && !line.startsWith("Last updated from sources:")).join(" ");
+      const paragraph = document.createElement("p");
+      paragraph.textContent = body;
+      answer.appendChild(paragraph);
+      if (payload.source_url) {
+        const link = document.createElement("a");
+        link.href = payload.source_url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = payload.source_url;
+        answer.appendChild(link);
+      }
+      if (payload.fetched_at) {
+        const date = document.createElement("p");
+        date.textContent = `Last updated from sources: ${payload.fetched_at}.`;
+        answer.appendChild(date);
+      }
+      const inspectorBody = payload.inspector || {};
+      const hits = (inspectorBody.hits || []).map((hit) => (
+        `${hit.chunk_id} | ${hit.fact_type} | Chroma distance ${hit.chroma_distance} | ${hit.source_url}`
+      ));
+      inspector.textContent = [
+        `action: ${inspectorBody.action || ""}`,
+        `llm_called: ${inspectorBody.llm_called}`,
+        `fact type: ${(inspectorBody.fact_types || []).join(", ")}`,
+        ...hits,
+        `source URL: ${payload.source_url || ""}`,
+        `trace: ${payload.trace_path || ""}`,
+      ].join("\n");
+    }
+
+    const form = document.querySelector("form");
+    const submit = form.querySelector("button[type=submit]");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      inspector.textContent = "";
+      answer.textContent = "Looking that up…";
+      submit.disabled = true;
+      try {
+        const response = await fetch("/api/ask", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({question: input.value})
+        });
+        if (response.status === 503) {
+          answer.textContent = "Index is not ready.";
+          return;
+        }
+        const payload = await response.json();
+        if (response.status === 400) {
+          answer.textContent = "Ask one factual question, up to 500 characters.";
+          return;
+        }
+        render(payload);
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    showReady();
+  </script>
+</body>
+</html>

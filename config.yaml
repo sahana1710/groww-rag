@@ -1,0 +1,35 @@
+embedding_model: sentence-transformers/all-MiniLM-L6-v2
+embedding_batch_size: 64
+chroma_path: data/chroma
+chroma_collection: hdfc_mf_facts
+chroma_space: cosine
+chunk_strategy: scheme_fact_blocks
+chunk_max_chars: 800
+chunk_overlap_chars: 120
+top_k: 4
+temperature: 0.1
+reasoning_effort: none
+llm_provider: groq
+llm_model: qwen/qwen3.8-27b
+citation_domains:
+  - groww.in
+  - sebi.gov.in
+  - amfiindia.com
+  - camsonline.com
+  - kfintech.com
+  - hdfcfund.com
+blocked_path_prefixes:
+  - groww.in/blog
+schemes:
+  - scheme_name: HDFC Large Cap Fund Direct Growth
+    source_id: hdfc-large-cap
+    aliases: ["large cap"]
+  - scheme_name: HDFC Flexi Cap Direct Plan Growth
+    source_id: hdfc-flexi-cap
+    aliases: ["flexi cap", "hdfc equity fund"]
+  - scheme_name: HDFC ELSS Tax Saver Fund Direct Plan Growth
+    source_id: hdfc-elss
+    aliases: ["elss", "tax saver"]
+  - scheme_name: HDFC Mid Cap Fund Direct Growth
+    source_id: hdfc-mid-cap
+    aliases: ["mid cap"]
