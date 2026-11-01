@@ -146,7 +146,7 @@ flowchart TB
 | `app/llm/base.py` | `complete(system, user) -> str`. |
 | `app/llm/factory.py` | Build the client named by `LLM_PROVIDER`. |
 | `app/store/layout.py` | Paths, watermarks, trace writer. |
-| `web/index.html` | Mint Financial System page: scheme picker, question cards, answer, collapsed inspector. |
+| `web/index.html` | Chat page: scheme menu, three short questions, thread, tab-local history. |
 | `prompts/system.md` | Reviewed prompt. Not buried in Python. |
 | `sources/sources.csv` | The only URL allow-list the loader will fetch. |
 
@@ -583,47 +583,39 @@ One file per request: `data/traces/<utc timestamp>-<short id>.json`.
 
 ## 9. UI
 
-`web/index.html` is one static page. The API serves it at `/`. No frontend build, no account, and no second route. The visual target is the Stitch export in `stitch_groww_rag_chatbot_ui/`. Tokens live in `stitch_groww_rag_chatbot_ui/mint_financial_system/DESIGN.md` (Mint Financial System). The two screens are reference layouts, not a second app.
+`web/index.html` is one static page. FastAPI serves it at `/`. There is no frontend build, no account, and no second route. The Stitch export in `stitch_groww_rag_chatbot_ui/` is the layout reference. The shipped page does not copy its placeholder scheme names, comparison prompts, account avatar, or “trained on SID” line.
 
-| Screen | Folder | What it shows |
-| --- | --- | --- |
-| Scheme home, ELSS selected | `groww_mutual_fund_facts_chat_with_history_centered_brand/` | Left rail, four scheme cards, ELSS question cards, a question field |
-| Scheme switch, Mid Cap active | `groww_assistant_scheme_switch_to_hdfc_mid_cap/` | The same shell with Mid Cap marked Active and its own question cards |
-
-Each folder has `code.html` and `screen.png`.
+The page is a chat. The left rail stays put. The thread scrolls on its own. The suggested questions, the scheme menu, the input, and the disclaimer stay fixed under the thread.
 
 ### Layout
 
-Desktop is a left rail plus a centered main column. The rail is about a quarter of the width. Below 768px the rail collapses behind a menu control and the main column uses a 16px gutter.
+- **Rail.** A pale mint tile with a rising chart, then “Groww Assistant”. A square-with-a-bar control collapses the rail to the logo. Clicking the logo opens it again. On a narrow window the logo opens the rail as an overlay. “New chat” is left-aligned. “Recent chats” lists questions from this browser tab, newest first, with no “This tab” line. Choosing one scrolls to that turn. It does not ask again.
+- **Empty chat.** The line “What can I help you with today?” is centered in the chat area.
+- **Thread.** The question sits on the right, in the pale mint fill, with green text. The answer sits on the left, on a white card: the reply, one source link, then the fetch-date line. “Facts only.” is removed from the text shown in the bubble. The API response may still start with that phrase.
+- **Suggested questions.** Three short questions in one row, in the chat area, not inside the input. They do not scroll with the thread. An X removes that question until New chat. The label does not repeat the scheme name, because the menu already has it. ELSS shows lock-in period, expense ratio, and minimum SIP. Mid Cap and Flexi Cap show exit load, expense ratio, and benchmark. Large Cap shows expense ratio, exit load, and benchmark.
+- **Asking.** A click or a typed question is one `POST /api/ask`. If the text does not already name a scheme, and it is not a capital-gains or fund-house question, the page appends `for {selected scheme}?` before sending. The bubble shows the words the user chose. The thread is kept in `sessionStorage` under `groww-rag-thread`, up to 20 turns. New chat clears that thread and restores the three questions.
+- **Scheme menu.** The label “Choose a scheme” and a menu of the four canonical Direct Growth names sit on their own row. The menu is only as wide as the selected name.
+- **Input.** Its own field. Placeholder: “Ask Groww”. The send control uses the same pale mint as New chat.
+- **Disclaimer.** One centered line under the field, not inside it: “Facts only. No investment advice. Check the linked page before you act.”
 
-- **Rail.** Title “Official SID Assistant”. A “New Chat” control clears the answer and the input. “Recent Chats” lists earlier questions from this browser tab only. Choosing one fills the input. It does not send the previous answer back to the server.
-- **Scheme row.** Label “Select Supported HDFC Mutual Fund”, with chips “Direct Growth Only” and “Strict Fact Mode”. Four cards, one per corpus scheme. The selected card uses the mint tint and an “Active” mark. Selecting a card changes the popular-question set. It does not call the model.
-- **Question cards.** Up to four cards under “Popular Questions for:” plus the selected scheme’s canonical name, and “Click to ask instantly”. A card fills the input and submits that one question.
-- **Composer.** A pill-shaped field. Placeholder: “Ask a fact. No investment advice.” Submit is the mint primary button.
-- **Answer.** `aria-live="polite"`. Body, then one source link (`target="_blank"`, `rel="noopener noreferrer"`), then the fetch-date line. Refusals stay prefixed with “Facts only.”
-- **Inspector.** Collapsed “How this answer was produced”, under the answer. It renders `inspector` and the trace path.
-- **Disclaimer.** Appendix A, always in the DOM, above the composer. The market-risk line from the screen footer can sit under it. It does not replace Appendix A.
+There is no “How this answer was produced” panel.
 
-### Mint Financial System
+### Colour and type
 
-Use these tokens from `DESIGN.md`. Do not introduce a second palette.
+The green is the New Chat green, not the bright `#00D09C` fill.
 
 | Role | Value |
 | --- | --- |
-| Primary action | `#00D09C`, hover `#00B386`, label `#FFFFFF`, weight 600, 8px radius |
-| Mint tint | `#E6FAF5` for the active scheme card, selected chips, and outline-button hover |
-| Text | `#44475B` primary, `#7C7E8C` secondary |
-| Canvas and card | `#F8F8F8` canvas, `#FFFFFF` card, 1px border `#E9E9EB`, 12px card radius |
-| Error and refusal accent | `#EB5B3C` |
-| Type | Inter. Body 16/24. Card titles 16/24 at weight 500. Metrics 20/26 at weight 600 with tabular figures |
-| Search field | Full pill, 44px tall, canvas fill, mint border on focus |
-| Elevation | Cards stay flat. Hover may use `0 4px 12px rgba(68, 71, 91, 0.06)`. No modal and no order sheet |
+| Green text and icons | `#24543F` on Assistant, New chat, links, the send icon, and the chart mark |
+| Pale mint fill | `#EAF9F5` on New chat, the user’s bubble, the send button, and the logo tile |
+| Text | `#171A2C` for titles, `#44475B` for body, `#7C7E8C` for the disclaimer and secondary lines |
+| Canvas and card | `#F8F8F8` canvas, `#FFFFFF` card, 1px border `#E9E9EB` |
+| Error | `#EB5B3C` is reserved for an error state. It is not a trade colour |
+| Type | Inter. Chat copy is 14px. “Groww Assistant” is 20px at weight 700 |
 
-Primary buttons are for asking a question. There is no buy, sell, or other transaction control. Destructive red is only for an error or a refusal state, not for a trade.
+Motion is a short ease on the rail width and on a new message. It is turned off when the system asks for reduced motion.
 
 ### What the screens must not copy
-
-The export uses placeholder names and a few prompts that this product refuses. The page uses the corpus names and the policy gate.
 
 | On the Stitch screen | On this page |
 | --- | --- |
@@ -631,17 +623,15 @@ The export uses placeholder names and a few prompts that this product refuses. T
 | “HDFC Mid Cap Opportunities Fund” | HDFC Mid Cap Fund Direct Growth |
 | “HDFC Flexi Cap Fund” | HDFC Flexi Cap Direct Plan Growth |
 | “HDFC ELSS Tax Saver Fund” | HDFC ELSS Tax Saver Fund Direct Plan Growth |
-| “Flexi Cap vs Large Cap TER” | Not a suggested question. Ranking and comparison stay refusals |
-| “Direct vs Regular plan” TER | Not a suggested question. Regular plan is out of scope |
-| “Trained on official Scheme Information Documents” | The footer says answers are quotations of the loaded Groww pages. The model is not trained on the SID |
+| “Flexi Cap vs Large Cap TER” | Not a suggested question |
+| “Direct vs Regular plan” | Not a suggested question |
+| “Trained on official Scheme Information Documents” | The disclaimer says answers quote the loaded pages |
 | Avatar “JD” and an account menu | Omitted. There is no login |
-| Recent chats as a stored history | Labels in this tab only. `POST /api/ask` still sends one question |
+| Four or five full-name question cards | Three short questions. The selected scheme is added on send |
 
-ELSS cards, when that scheme is selected: lock-in, expense ratio, minimum SIP, exit load. Mid Cap cards: exit load, expense ratio, benchmark, minimum SIP and minimum lump sum. Large Cap and Flexi Cap use the same four fact types with that scheme’s name in the question. Capital-gains download stays available as a question that does not require a scheme card. Suggested questions ask for one fact on one scheme. They do not ask which scheme is better.
+Suggested questions ask for one fact. They do not ask which scheme is better. A capital-gains question typed by the user is sent as written, without a scheme name attached.
 
-The page keeps the last answer on screen and sends only the current input on the next submit. It does not post prior answers back.
-
-Provider and health failures use the PRD’s user-facing sentence: “The assistant could not complete that question. Your question was not sent to a fund-recommendation system.” A 503 from an unready index instead says the index is not ready.
+If the index is not ready, the page says so. A provider error uses the fixed sentence: “The assistant could not complete that question. Your question was not sent to a fund-recommendation system.”
 
 ---
 
@@ -682,9 +672,9 @@ Timeouts: load uses 20 seconds per URL; the provider call uses 30 seconds. The p
 1. Open `sources/sources.csv` and count the rows.
 2. Run `python -m app.cli pipeline` and open, in order, `data/raw`, `data/chunks/chunks.jsonl`, `data/embeddings/embeddings.jsonl`, and `data/pipeline.json`.
 3. Ask the expense-ratio example. Confirm the number is in the cited chunk and the URL is the Large Cap scheme page.
-4. Ask “Should I buy HDFC Flexi Cap?” and confirm `llm_called` is false in the inspector.
+4. Ask “Should I buy HDFC Flexi Cap?” and confirm `llm_called` is false in the trace file.
 5. Paste a PAN and confirm the trace file does not contain it.
-6. Expand “How this answer was produced” and match the hit ids to lines in `chunks.jsonl`.
+6. Open the trace file named in the response and match the hit ids to lines in `chunks.jsonl`. The page does not show an inspector.
 
 `eval/sample_qa.md` is produced by a script that runs 5–10 questions through `POST /api/ask` and writes the real `final_text` and `source_url`. It is not authored by hand.
 
@@ -702,5 +692,6 @@ A customer release would remove the stage inspector, put the process behind Grow
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.2 | 1 November 2026 | UI section rewritten to the shipped chat page: rail, three short questions, scheme menu, and the New Chat green. |
 | 1.1 | 1 November 2026 | UI section now follows the Stitch export and the Mint Financial System. Scheme names and the single-question ask path stay as specified. |
 | 1.0 | 1 November 2026 | Architecture for the inspectable local RAG prototype described in the PRD. |

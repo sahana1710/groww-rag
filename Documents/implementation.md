@@ -232,7 +232,7 @@ The first run downloads the model. Later steps reuse the same model string. Quer
 
 **Commands:** `python -m app.cli ask "…"`, then `uvicorn app.api:app --host 127.0.0.1 --port 8000`
 
-One question in, one answer out. No session and no chat history.
+One question in, one answer out. The browser keeps the thread for this tab. Each request still sends only the current question.
 
 ### Decide before retrieval
 
@@ -274,26 +274,18 @@ Write `data/traces/<id>.json` with the action, filters, hits, whether the LLM wa
 
 ### UI
 
-One page, `web/index.html`, served at `/`. Build it from the Stitch export in `stitch_groww_rag_chatbot_ui/`. The look is the Mint Financial System in `stitch_groww_rag_chatbot_ui/mint_financial_system/DESIGN.md`. The two reference screens are:
+One page, `web/index.html`, served at `/`. The Stitch screens in `stitch_groww_rag_chatbot_ui/` are the reference. The page uses the corpus scheme names and does not copy comparison prompts, the account avatar, or “trained on SID”.
 
-- `groww_mutual_fund_facts_chat_with_history_centered_brand/` — ELSS selected, with question cards for lock-in, expense ratio, minimum SIP, and exit load.
-- `groww_assistant_scheme_switch_to_hdfc_mid_cap/` — Mid Cap marked Active, with question cards for exit load, expense ratio, benchmark, and minimum SIP plus lump sum.
+The chat column scrolls. The rail, the three questions, the scheme menu, the input, and the disclaimer do not move with it.
 
-Each folder contains `code.html` and `screen.png`.
+- Left rail: logo and “Groww Assistant”. The panel control collapses the rail to the logo. “New chat” is left-aligned and clears this tab’s thread. “Recent chats” lists questions newest first. Choosing one scrolls to that turn.
+- Empty state, centered: “What can I help you with today?”
+- The user’s question is on the right. The answer, one source link, and the date line are on the left. The bubble does not show a leading “Facts only.”
+- Three short questions sit in one row in the chat area, above the input and not inside it. They stay fixed while the thread scrolls. An X hides one until New chat. Labels are “What is the lock-in period?”, “What is the expense ratio?”, “What is the minimum SIP?”, “What is the exit load?”, and “What is the benchmark?”, three at a time for the selected scheme. The page appends `for {selected scheme}?` when the question does not already name a scheme.
+- “Choose a scheme” is its own row. The menu lists the four canonical names. The field placeholder is “Ask Groww”.
+- One centered line under the field: “Facts only. No investment advice. Check the linked page before you act.”
 
-Layout, matching those screens:
-
-- Left rail: “New Chat” clears the input and the answer. “Recent Chats” is a list of questions already asked in this tab. Choosing one fills the input. The server still receives only the current question.
-- Main column: four scheme cards. Use the corpus names, not the placeholder names on the screens (“HDFC Top 100”, “HDFC Mid Cap Opportunities”). The selected card uses mint tint `#E6FAF5` and an Active mark. Selecting a card swaps the question cards and does not call the model.
-- Question cards fill the input and submit. One fact, one scheme. Do not add the screen’s “Flexi Cap vs Large Cap TER” or “Direct vs Regular” prompts.
-- Pill-shaped input. Placeholder: “Ask a fact. No investment advice.” Primary button `#00D09C`, hover `#00B386`, white label, 8px radius. No buy or sell button.
-- Answer region (`aria-live="polite"`), one source link opening in a new tab, and the date line.
-- Appendix A disclaimer, always visible. The screen’s “Trained on official Scheme Information Documents” line is not used. The footer says the answer quotes the loaded Groww pages.
-- A collapsed “How this answer was produced” panel: action, `llm_called`, chunk ids, Chroma distance, fact type, source URL, trace path.
-
-Type is Inter. Page canvas `#F8F8F8`, cards `#FFFFFF` with a 1px `#E9E9EB` border and 12px radius. Body text `#44475B`, secondary text `#7C7E8C`. Refusal and error text may use `#EB5B3C`.
-
-Large Cap and Flexi Cap get the same four card types as Mid Cap, with that scheme’s name in the question. Capital-gains download stays as a question that does not need a scheme card. Omit the avatar and any account menu.
+Colour matches the New Chat control. Pale mint fill `#EAF9F5`. Green text and icons `#24543F`. Canvas `#F8F8F8`, cards `#FFFFFF`, border `#E9E9EB`, body `#44475B`, secondary text `#7C7E8C`. Type is Inter at 14px for the chat. There is no buy or sell button and no inspector.
 
 The page posts only the current question. If the index is not ready, say so. On a provider error: “The assistant could not complete that question. Your question was not sent to a fund-recommendation system.”
 
@@ -359,6 +351,7 @@ Manual checks after `pipeline` and a real `ask`:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.4 | 1 November 2026 | UI section rewritten to the shipped chat page: three short questions, scheme menu, and the New Chat green. |
 | 1.3 | 1 November 2026 | UI section now follows the Stitch export and the Mint Financial System. Suggested questions stay single-scheme facts. |
 | 1.2 | 1 November 2026 | Added document loading between scrape and chunk. Chunking reads `documents.jsonl`. |
 | 1.1 | 1 November 2026 | Simplified to directory, scrape, chunk, embed, vector store, retrieval and UI, and guardrail cases. |
