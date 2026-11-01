@@ -37,12 +37,13 @@ class Hit:
 
 
 def cache_dir(root: Path) -> Path:
-    """Keep the model out of the deploy bundle. Vercel downloads it into /tmp on first use."""
-    if os.environ.get("VERCEL"):
-        path = Path("/tmp/fastembed")
-        path.mkdir(parents=True, exist_ok=True)
-        os.environ["FASTEMBED_CACHE_PATH"] = str(path)
-        return path
+    """Use the model downloaded during the Vercel build. That folder is read-only at runtime."""
+    bundled = root / "models" / "fastembed"
+    if (bundled / "models--qdrant--all-MiniLM-L6-v2-onnx").exists():
+        os.environ["FASTEMBED_CACHE_PATH"] = str(bundled)
+        os.environ["HF_HOME"] = str(bundled)
+        os.environ["HF_HUB_CACHE"] = str(bundled)
+        return bundled
     path = root / "models" / "fastembed"
     try:
         path.mkdir(parents=True, exist_ok=True)
