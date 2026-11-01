@@ -36,23 +36,24 @@ class Hit:
     text: str
 
 
+def _onnx_dir(folder: Path) -> Path | None:
+    matches = [path for path in folder.rglob("model.onnx") if path.is_file() and path.stat().st_size > 1_000_000]
+    return matches[0].parent if matches else None
+
+
 def cache_dir(root: Path) -> Path:
-    """Use the model downloaded during the Vercel build. That folder is read-only at runtime."""
+    """Use the model shipped with the deploy. Downloads go to /tmp, which is writable."""
+    home = Path("/tmp/hf-home")
+    home.mkdir(parents=True, exist_ok=True)
+    os.environ["HF_HOME"] = str(home)
+    os.environ["HF_HUB_CACHE"] = str(home / "hub")
+    os.environ["XDG_CACHE_HOME"] = str(home)
     bundled = root / "models" / "fastembed"
-    if (bundled / "models--qdrant--all-MiniLM-L6-v2-onnx").exists():
+    if _onnx_dir(bundled):
         os.environ["FASTEMBED_CACHE_PATH"] = str(bundled)
-        os.environ["HF_HOME"] = str(bundled)
-        os.environ["HF_HUB_CACHE"] = str(bundled)
         return bundled
-    path = root / "models" / "fastembed"
-    try:
-        path.mkdir(parents=True, exist_ok=True)
-        probe = path / ".write"
-        probe.write_text("ok", encoding="utf-8")
-        probe.unlink()
-    except OSError:
-        path = Path("/tmp/fastembed")
-        path.mkdir(parents=True, exist_ok=True)
+    path = Path("/tmp/fastembed")
+    path.mkdir(parents=True, exist_ok=True)
     os.environ["FASTEMBED_CACHE_PATH"] = str(path)
     return path
 
@@ -62,7 +63,12 @@ def _model(name: str, root: Path):
         from fastembed import TextEmbedding
 
         folder = cache_dir(root)
-        _MODELS[name] = TextEmbedding(model_name=name, cache_dir=str(folder))
+        kwargs = {"model_name": name, "cache_dir": str(folder)}
+        snapshot = _onnx_dir(folder)
+        if snapshot:
+            kwargs["specific_model_path"] = str(snapshot)
+            kwargs["local_files_only"] = True
+        _MODELS[name] = TextEmbedding(**kwargs)
     return _MODELS[name]
 
 

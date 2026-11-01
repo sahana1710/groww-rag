@@ -17,10 +17,15 @@ from app.store.layout import IndexNotReady, assert_ready_for_ask, repo_root
 def _warm_encoder() -> None:
     if "pytest" in sys.modules:
         return
-    from app.retrieve.search import _model
+    try:
+        from app.retrieve.search import _model
 
-    settings = load_settings()
-    _model(settings.embedding_model, repo_root())
+        settings = load_settings()
+        _model(settings.embedding_model, repo_root())
+    except Exception:
+        import logging
+
+        logging.exception("encoder warmup failed")
 
 
 app = FastAPI(title="Groww mutual fund facts assistant", on_startup=[_warm_encoder])
