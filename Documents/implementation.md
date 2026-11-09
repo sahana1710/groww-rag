@@ -279,11 +279,11 @@ One page, `web/index.html`, served at `/`. The Stitch screens in `stitch_groww_r
 The chat column scrolls. The rail, the three questions, the scheme menu, the input, and the disclaimer do not move with it.
 
 - Left rail: logo and “Groww Assistant”. The panel control collapses the rail to the logo. “New chat” is left-aligned and clears this tab’s thread. “Recent chats” lists questions newest first. Choosing one scrolls to that turn.
-- Empty state, centered: “What can I help you with today?”
+- Empty state, centered: “What would you like to know today?”
 - The user’s question is on the right. The answer, one source link, and the date line are on the left. The bubble does not show a leading “Facts only.”
-- Three short questions sit in one row in the chat area, above the input and not inside it. They stay fixed while the thread scrolls. An X hides one until New chat. Labels are “What is the lock-in period?”, “What is the expense ratio?”, “What is the minimum SIP?”, “What is the exit load?”, and “What is the benchmark?”, three at a time for the selected scheme. The page appends `for {selected scheme}?` when the question does not already name a scheme.
+- Three questions sit in one row in the chat area, above the input and not inside it. They stay fixed while the thread scrolls. Each card includes the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. An X hides one until New chat and does not reveal a fourth. A typed question still gets `for {selected scheme}?` appended when it does not already name a scheme.
 - “Choose a scheme” is its own row. The menu lists the four canonical names. The field placeholder is “Ask Groww”.
-- One centered line under the field: “Facts only. No investment advice. Check the linked page before you act.”
+- One centered line under the field, with a warning icon in the same grey: “Facts only. No investment advice. Check the linked page before you act.”
 
 Colour matches the New Chat control. Pale mint fill `#EAF9F5`. Green text and icons `#24543F`. Canvas `#F8F8F8`, cards `#FFFFFF`, border `#E9E9EB`, body `#44475B`, secondary text `#7C7E8C`. Type is Inter at 14px for the chat. There is no buy or sell button and no inspector.
 

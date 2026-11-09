@@ -270,6 +270,10 @@
     .prompt-x:hover { color: var(--ink); }
     .suggestions:empty, .suggestions[hidden] { display: none; }
     .disclaimer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
       margin: 0.45rem 0 0;
       padding: 0;
       color: var(--muted);
@@ -277,8 +281,11 @@
       line-height: 1.4;
       text-align: center;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    }
+    .disclaimer .material-symbols-outlined {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1;
     }
     #answer {
       display: flex;
@@ -493,7 +500,7 @@
           <span class="material-symbols-outlined">arrow_upward</span>
         </button>
       </form>
-      <p class="disclaimer">Facts only. No investment advice. Check the linked page before you act.</p>
+      <p class="disclaimer"><span class="material-symbols-outlined" aria-hidden="true">warning</span>Facts only. No investment advice. Check the linked page before you act.</p>
     </div>
     </div>
     </div>
@@ -616,7 +623,7 @@
       if (!thread.length) {
         const empty = document.createElement("p");
         empty.className = "empty-thread";
-        empty.textContent = "What can I help you with today?";
+        empty.textContent = "What would you like to know today?";
         answer.appendChild(empty);
         return;
       }
@@ -679,13 +686,14 @@
     }
 
     function chip(question, help) {
+      const shown = questionForApi(question.label || question.text);
       const card = document.createElement("div");
       card.className = help ? "prompt help" : "prompt";
       const ask = document.createElement("button");
       ask.type = "button";
       ask.className = "prompt-ask";
-      ask.textContent = question.label || question.text;
-      ask.addEventListener("click", () => submitQuestion(question.label || question.text));
+      ask.textContent = shown;
+      ask.addEventListener("click", () => submitQuestion(shown));
       const close = document.createElement("button");
       close.type = "button";
       close.className = "prompt-x";

@@ -590,13 +590,13 @@ The page is a chat. The left rail stays put. The thread scrolls on its own. The 
 ### Layout
 
 - **Rail.** A pale mint tile with a rising chart, then “Groww Assistant”. A square-with-a-bar control collapses the rail to the logo. Clicking the logo opens it again. On a narrow window the logo opens the rail as an overlay. “New chat” is left-aligned. “Recent chats” lists questions from this browser tab, newest first, with no “This tab” line. Choosing one scrolls to that turn. It does not ask again.
-- **Empty chat.** The line “What can I help you with today?” is centered in the chat area.
+- **Empty chat.** The line “What would you like to know today?” is centered in the chat area.
 - **Thread.** The question sits on the right, in the pale mint fill, with green text. The answer sits on the left, on a white card: the reply, one source link, then the fetch-date line. “Facts only.” is removed from the text shown in the bubble. The API response may still start with that phrase.
-- **Suggested questions.** Three short questions in one row, in the chat area, not inside the input. They do not scroll with the thread. An X removes that question until New chat. The label does not repeat the scheme name, because the menu already has it. ELSS shows lock-in period, expense ratio, and minimum SIP. Mid Cap and Flexi Cap show exit load, expense ratio, and benchmark. Large Cap shows expense ratio, exit load, and benchmark.
+- **Suggested questions.** Three questions in one row, in the chat area, not inside the input. They do not scroll with the thread. Each card names the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. An X removes that question until New chat and does not reveal a fourth. ELSS shows lock-in period, expense ratio, and minimum SIP. Mid Cap and Flexi Cap show exit load, expense ratio, and benchmark. Large Cap shows expense ratio, exit load, and benchmark.
 - **Asking.** A click or a typed question is one `POST /api/ask`. If the text does not already name a scheme, and it is not a capital-gains or fund-house question, the page appends `for {selected scheme}?` before sending. The bubble shows the words the user chose. The thread is kept in `sessionStorage` under `groww-rag-thread`, up to 20 turns. New chat clears that thread and restores the three questions.
 - **Scheme menu.** The label “Choose a scheme” and a menu of the four canonical Direct Growth names sit on their own row. The menu is only as wide as the selected name.
 - **Input.** Its own field. Placeholder: “Ask Groww”. The send control uses the same pale mint as New chat.
-- **Disclaimer.** One centered line under the field, not inside it: “Facts only. No investment advice. Check the linked page before you act.”
+- **Disclaimer.** One centered line under the field, not inside it, with a warning icon in the same grey as the words: “Facts only. No investment advice. Check the linked page before you act.”
 
 There is no “How this answer was produced” panel.
 
