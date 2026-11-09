@@ -282,7 +282,7 @@ The chat column scrolls. The rail, the three questions, the scheme menu, the inp
 - Empty state, centered: “What would you like to know today?”
 - The user’s question is on the right. The answer, one source link, and the date line are on the left. The bubble does not show a leading “Facts only.”
 - Three questions sit in one row in the chat area, above the input and not inside it. They stay fixed while the thread scrolls. Each card includes the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. An X hides one until New chat and does not reveal a fourth. A typed question still gets `for {selected scheme}?` appended when it does not already name a scheme.
-- “Choose a scheme” is its own row. The menu lists the four canonical names. The field placeholder is “Ask Groww”.
+- “Choose a scheme” is fixed at the top of the chat. The choices are cards, with “HDFC AMC Overview” first, then the four canonical names. An arrow collapses them to the selected name. The field placeholder is “Ask Groww”.
 - One centered line under the field, with a warning icon in the same grey: “Facts only. No investment advice. Check the linked page before you act.”
 
 Colour matches the New Chat control. Pale mint fill `#EAF9F5`. Green text and icons `#24543F`. Canvas `#F8F8F8`, cards `#FFFFFF`, border `#E9E9EB`, body `#44475B`, secondary text `#7C7E8C`. Type is Inter at 14px for the chat. There is no buy or sell button and no inspector.

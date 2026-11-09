@@ -101,6 +101,67 @@
       flex-direction: column;
       min-height: 0;
     }
+    .scheme-bar {
+      flex: none;
+      padding: 0.85rem 1.5rem 0.75rem;
+      background: var(--canvas);
+      border-bottom: 1px solid var(--border);
+    }
+    .scheme-bar-head {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      max-width: 46rem;
+      margin: 0 auto;
+    }
+    .scheme-bar .scheme-label,
+    .scheme-selected {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
+      font-size: var(--chat);
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .scheme-bar.collapsed .scheme-label,
+    .scheme-bar.collapsed .scheme-cards,
+    .scheme-bar:not(.collapsed) .scheme-selected { display: none; }
+    .scheme-toggle {
+      flex: none;
+      width: 2rem;
+      height: 2rem;
+      border: 0;
+      border-radius: 0.5rem;
+      background: transparent;
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+    }
+    .scheme-toggle:hover { background: var(--mint-tint); }
+    .scheme-toggle .material-symbols-outlined { font-size: 1.25rem; }
+    .scheme-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
+      gap: 0.5rem;
+      max-width: 46rem;
+      margin: 0.65rem auto 0;
+    }
+    .scheme-card {
+      min-height: 3.25rem;
+      border-radius: 0.75rem;
+      background: var(--card);
+      padding: 0.65rem 0.8rem;
+      font-size: var(--chat);
+      font-weight: 500;
+      line-height: 1.45;
+      text-align: left;
+      color: var(--ink);
+    }
+    .scheme-card[aria-selected="true"] {
+      background: var(--mint-tint);
+      border-color: var(--mint);
+      color: var(--mint);
+    }
     .rail {
       width: 18rem;
       flex: none;
@@ -116,7 +177,7 @@
       gap: 1rem;
     }
     .rail > * { flex: none; }
-    .new-chat, .send, .scheme, .prompt, .history button {
+    .new-chat, .send, .scheme, .prompt, .scheme-card, .history button {
       border: 1px solid var(--border);
       background: var(--card);
     }
@@ -210,7 +271,7 @@
       border-color: var(--mint);
     }
     a, a:visited, .bubble a, .brand-name span { color: var(--mint); }
-    .prompt:hover, .prompt:focus-within, .composer:focus-within, .scheme-pick:focus {
+    .prompt:hover, .prompt:focus-within, .composer:focus-within, .scheme-card:hover, .scheme-card:focus-visible {
       border-color: var(--mint);
       outline: none;
     }
@@ -338,38 +399,6 @@
       font-size: var(--chat);
       overflow-wrap: anywhere;
     }
-    .scheme-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin: 0 0 0.65rem;
-    }
-    .scheme-label {
-      flex: none;
-      font-size: var(--chat);
-      font-weight: 600;
-      color: var(--ink);
-    }
-    .scheme-pick {
-      flex: 0 1 auto;
-      width: auto;
-      max-width: 100%;
-      field-sizing: content;
-      height: 2.4rem;
-      appearance: none;
-      -webkit-appearance: none;
-      border: 1px solid var(--border);
-      background-color: var(--card);
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2344475B' d='M2.2 4.3 6 8l3.8-3.7-.9-.9L6 6.2 3.1 3.4z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 0.45rem center;
-      background-size: 0.7rem;
-      color: var(--ink);
-      font-weight: 500;
-      font-size: var(--chat);
-      border-radius: 0.7rem;
-      padding: 0 1.45rem 0 0.7rem;
-    }
     .composer-wrap {
       flex: none;
       padding: 0.85rem 1.5rem 1rem;
@@ -423,7 +452,7 @@
     .backdrop { display: none; }
     @media (prefers-reduced-motion: no-preference) {
       .rail { transition: width 0.28s ease; }
-      .prompt, .composer, .scheme-pick, .new-chat, .send { transition: border-color 0.2s ease, background-color 0.2s ease; }
+      .prompt, .composer, .scheme-card, .new-chat, .send { transition: border-color 0.2s ease, background-color 0.2s ease; }
       .bubble, .empty-thread { animation: settle 0.32s ease; }
     }
     @keyframes settle {
@@ -432,9 +461,8 @@
     }
     @media (max-width: 800px) {
       .edge-logo { display: inline-flex; }
-      .main { padding-top: 3.25rem; }
-      .main, .composer-wrap, .float-questions { padding-left: 1rem; padding-right: 1rem; }
-      .scheme-row { flex-wrap: wrap; }
+      .main, .composer-wrap, .float-questions, .scheme-bar { padding-left: 1rem; padding-right: 1rem; }
+      .scheme-bar { padding-left: 3.5rem; }
       .rail {
         position: fixed;
         z-index: 30;
@@ -480,6 +508,16 @@
       <div class="history" id="history"></div>
     </aside>
     <div class="stage">
+    <div class="scheme-bar" id="scheme-bar">
+      <div class="scheme-bar-head">
+        <p class="scheme-label" id="scheme-heading">Choose a scheme</p>
+        <p class="scheme-selected" id="scheme-selected"></p>
+        <button class="scheme-toggle" type="button" id="scheme-toggle" aria-expanded="true" aria-controls="scheme-cards" aria-label="Hide schemes">
+          <span class="material-symbols-outlined">expand_less</span>
+        </button>
+      </div>
+      <div class="scheme-cards" id="scheme-cards" role="listbox" aria-labelledby="scheme-heading"></div>
+    </div>
     <main class="main">
       <div class="column">
         <div id="answer" aria-live="polite"></div>
@@ -490,10 +528,6 @@
     </div>
     <div class="composer-wrap">
     <div class="composer-inner">
-      <div class="scheme-row">
-        <label class="scheme-label" for="scheme">Choose a scheme</label>
-        <select id="scheme" class="scheme-pick"></select>
-      </div>
       <form class="composer" id="ask-form">
         <input id="question" name="question" placeholder="Ask Groww" autocomplete="off" maxlength="500">
         <button class="send" type="submit" id="send" aria-label="Ask" disabled>
@@ -508,6 +542,16 @@
   <script type="application/json" id="catalog">
     {
       "schemes": [
+        {
+          "id": "amc",
+          "name": "HDFC AMC Overview",
+          "detail": "Fund house",
+          "questions": [
+            {"tag": "Overview", "note": "Fund house", "label": "About HDFC Mutual Fund?", "text": "About HDFC Mutual Fund?"},
+            {"tag": "Registration", "note": "SEBI", "label": "When did the HDFC Mutual Fund fund house receive SEBI approval?", "text": "When did the HDFC Mutual Fund fund house receive SEBI approval?"},
+            {"tag": "Leadership", "note": "CEO", "label": "Who is the CEO of the HDFC Mutual Fund fund house?", "text": "Who is the CEO of the HDFC Mutual Fund fund house?"}
+          ]
+        },
         {
           "id": "elss",
           "name": "HDFC ELSS Tax Saver Fund Direct Plan Growth",
@@ -558,7 +602,10 @@
   </script>
   <script>
     const catalog = JSON.parse(document.getElementById("catalog").textContent);
-    const schemePick = document.getElementById("scheme");
+    const schemeBar = document.getElementById("scheme-bar");
+    const schemeCards = document.getElementById("scheme-cards");
+    const schemeSelected = document.getElementById("scheme-selected");
+    const schemeToggle = document.getElementById("scheme-toggle");
     const promptsEl = document.getElementById("prompts");
     const input = document.getElementById("question");
     const answer = document.getElementById("answer");
@@ -569,6 +616,10 @@
     const backdrop = document.getElementById("backdrop");
     const threadKey = "groww-rag-thread";
     const hiddenKey = "groww-rag-hidden-prompts";
+    const schemeKey = "groww-rag-scheme";
+    let selectedSchemeId = catalog.schemes.some((item) => item.id === sessionStorage.getItem(schemeKey))
+      ? sessionStorage.getItem(schemeKey)
+      : catalog.schemes[0].id;
     const schemeHints = [
       "hdfc large cap fund direct growth", "large cap",
       "hdfc flexi cap direct plan growth", "flexi cap", "hdfc equity fund",
@@ -678,10 +729,12 @@
 
     function questionForApi(text) {
       const lower = text.toLowerCase();
-      const help = lower.includes("capital-gain") || lower.includes("capital gain") || lower.includes("tax statement") || /\bfund house\b/.test(lower) || /\bamc\b/.test(lower) || lower.includes("about hdfc mutual fund");
+      const fundHouse = /\bfund house\b/.test(lower) || /\bamc\b/.test(lower) || lower.includes("about hdfc mutual fund");
+      const help = lower.includes("capital-gain") || lower.includes("capital gain") || lower.includes("tax statement") || fundHouse;
       if (help || mentionsScheme(text)) return text;
-      const scheme = catalog.schemes.find((item) => item.id === schemePick.value);
+      const scheme = catalog.schemes.find((item) => item.id === selectedSchemeId);
       const body = text.replace(/[\s?]+$/, "");
+      if (scheme.id === "amc") return body + " for the HDFC Mutual Fund fund house?";
       return body + " for " + scheme.name + "?";
     }
 
@@ -705,10 +758,40 @@
     }
 
     function paintPrompts() {
-      const scheme = catalog.schemes.find((item) => item.id === schemePick.value);
+      const scheme = catalog.schemes.find((item) => item.id === selectedSchemeId);
       const questions = scheme.questions.slice(0, 3).filter((question) => !hiddenPrompts.includes(question.text));
       promptsEl.replaceChildren(...questions.map((question) => chip(question, question === catalog.help)));
       promptsEl.hidden = questions.length === 0;
+    }
+
+    function paintSchemeCards() {
+      const scheme = catalog.schemes.find((item) => item.id === selectedSchemeId);
+      schemeSelected.textContent = scheme.name;
+      schemeCards.replaceChildren(...catalog.schemes.map((item) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "scheme-card";
+        button.setAttribute("role", "option");
+        button.setAttribute("aria-selected", item.id === selectedSchemeId ? "true" : "false");
+        button.textContent = item.name;
+        button.addEventListener("click", () => chooseScheme(item.id));
+        return button;
+      }));
+    }
+
+    function chooseScheme(id) {
+      selectedSchemeId = id;
+      sessionStorage.setItem(schemeKey, id);
+      paintSchemeCards();
+      paintPrompts();
+    }
+
+    function setSchemeOpen(open) {
+      schemeBar.classList.toggle("collapsed", !open);
+      schemeToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      schemeToggle.setAttribute("aria-label", open ? "Hide schemes" : "Show schemes");
+      schemeToggle.querySelector("span").textContent = open ? "expand_less" : "expand_more";
+      sessionStorage.setItem("groww-rag-scheme-bar", open ? "1" : "0");
     }
 
     function shownAnswer(text) {
@@ -804,13 +887,9 @@
       }
     }
 
-    catalog.schemes.forEach((scheme) => {
-      const option = document.createElement("option");
-      option.value = scheme.id;
-      option.textContent = scheme.name;
-      schemePick.appendChild(option);
-    });
-    schemePick.addEventListener("change", paintPrompts);
+    schemeToggle.addEventListener("click", () => setSchemeOpen(schemeBar.classList.contains("collapsed")));
+    setSchemeOpen(sessionStorage.getItem("groww-rag-scheme-bar") !== "0");
+    paintSchemeCards();
     paintPrompts();
     paintHistory();
     paintThread();
