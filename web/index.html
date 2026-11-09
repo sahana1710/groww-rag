@@ -106,6 +106,7 @@
       padding: 0.85rem 1.5rem 0.75rem;
       background: var(--canvas);
       border-bottom: 1px solid var(--border);
+      cursor: pointer;
     }
     .scheme-bar-head {
       display: flex;
@@ -116,16 +117,25 @@
     }
     .scheme-bar .scheme-label,
     .scheme-selected {
-      flex: 1;
-      min-width: 0;
       margin: 0;
       font-size: var(--chat);
       font-weight: 600;
       color: var(--ink);
     }
+    .scheme-title {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+    }
     .scheme-bar.collapsed .scheme-label,
-    .scheme-bar.collapsed .scheme-cards,
-    .scheme-bar:not(.collapsed) .scheme-selected { display: none; }
+    .scheme-bar:not(.collapsed) .scheme-selected {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
     .scheme-toggle {
       flex: none;
       width: 2rem;
@@ -139,12 +149,21 @@
     }
     .scheme-toggle:hover { background: var(--mint-tint); }
     .scheme-toggle .material-symbols-outlined { font-size: 1.25rem; }
+    .scheme-bar.collapsed .scheme-toggle .material-symbols-outlined { transform: rotate(180deg); }
+    .scheme-cards-clip {
+      display: grid;
+      grid-template-rows: 1fr;
+      max-width: 46rem;
+      margin: 0 auto;
+      padding-top: 0.65rem;
+    }
+    .scheme-bar.collapsed .scheme-cards-clip { grid-template-rows: 0fr; padding-top: 0; }
     .scheme-cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
       gap: 0.5rem;
-      max-width: 46rem;
-      margin: 0.65rem auto 0;
+      min-height: 0;
+      overflow: hidden;
     }
     .scheme-card {
       min-height: 3.25rem;
@@ -452,8 +471,12 @@
     .backdrop { display: none; }
     @media (prefers-reduced-motion: no-preference) {
       .rail { transition: width 0.28s ease; }
-      .prompt, .composer, .scheme-card, .new-chat, .send { transition: border-color 0.2s ease, background-color 0.2s ease; }
-      .bubble, .empty-thread { animation: settle 0.32s ease; }
+      .scheme-cards-clip { transition: grid-template-rows 0.28s ease, padding-top 0.28s ease; }
+      .scheme-bar .scheme-label,
+      .scheme-selected { transition: opacity 0.2s ease; }
+      .scheme-toggle .material-symbols-outlined { transition: transform 0.28s ease; }
+      .prompt, .composer, .scheme-card, .new-chat, .send { transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease; }
+      .prompt, .bubble, .empty-thread { animation: settle 0.32s ease; }
     }
     @keyframes settle {
       from { opacity: 0; transform: translateY(8px); }
@@ -510,13 +533,17 @@
     <div class="stage">
     <div class="scheme-bar" id="scheme-bar">
       <div class="scheme-bar-head">
-        <p class="scheme-label" id="scheme-heading">Choose a scheme</p>
-        <p class="scheme-selected" id="scheme-selected"></p>
+        <div class="scheme-title">
+          <p class="scheme-label" id="scheme-heading">Choose a scheme</p>
+          <p class="scheme-selected" id="scheme-selected"></p>
+        </div>
         <button class="scheme-toggle" type="button" id="scheme-toggle" aria-expanded="true" aria-controls="scheme-cards" aria-label="Hide schemes">
           <span class="material-symbols-outlined">expand_less</span>
         </button>
       </div>
-      <div class="scheme-cards" id="scheme-cards" role="listbox" aria-labelledby="scheme-heading"></div>
+      <div class="scheme-cards-clip">
+        <div class="scheme-cards" id="scheme-cards" role="listbox" aria-labelledby="scheme-heading"></div>
+      </div>
     </div>
     <main class="main">
       <div class="column">
@@ -784,13 +811,16 @@
       sessionStorage.setItem(schemeKey, id);
       paintSchemeCards();
       paintPrompts();
+      setSchemeOpen(false);
     }
 
     function setSchemeOpen(open) {
       schemeBar.classList.toggle("collapsed", !open);
       schemeToggle.setAttribute("aria-expanded", open ? "true" : "false");
       schemeToggle.setAttribute("aria-label", open ? "Hide schemes" : "Show schemes");
-      schemeToggle.querySelector("span").textContent = open ? "expand_less" : "expand_more";
+      document.getElementById("scheme-heading").setAttribute("aria-hidden", open ? "false" : "true");
+      schemeSelected.setAttribute("aria-hidden", open ? "true" : "false");
+      schemeCards.inert = !open;
       sessionStorage.setItem("groww-rag-scheme-bar", open ? "1" : "0");
     }
 
@@ -887,7 +917,10 @@
       }
     }
 
-    schemeToggle.addEventListener("click", () => setSchemeOpen(schemeBar.classList.contains("collapsed")));
+    schemeBar.addEventListener("click", (event) => {
+      if (event.target.closest(".scheme-card")) return;
+      setSchemeOpen(schemeBar.classList.contains("collapsed"));
+    });
     setSchemeOpen(sessionStorage.getItem("groww-rag-scheme-bar") !== "0");
     paintSchemeCards();
     paintPrompts();
