@@ -589,7 +589,7 @@ The page is a chat. The left rail stays put. The thread scrolls on its own. “C
 
 ### Layout
 
-- **Rail.** The mark is a `#00D09C` arrow that rises, dips once, and points to the upper right. Beside it, “Mutual Funds” is `#00D09C` and “Knowledge Assistant” is `#171A2C`. A square-with-a-bar control collapses the rail to the logo. Clicking the logo opens it again. On a narrow window the logo opens the rail as an overlay. “New chat” is left-aligned. “Recent chats” lists questions from this browser tab, newest first, with no “This tab” line. Choosing one scrolls to that turn. It does not ask again.
+- **Rail.** The mark is a `#00D09C` arrow that rises, dips once, and points to the upper right. Beside it, “Mutual Fund” is `#00D09C` and “Knowledge Assistant” is `#171A2C`. A square-with-a-bar control collapses the rail to the logo. Clicking the logo opens it again. On a narrow window the logo opens the rail as an overlay. “New chat” is left-aligned. “Recent chats” lists questions from this browser tab, newest first, with no “This tab” line. Choosing one scrolls to that turn. It does not ask again.
 - **Empty chat.** The line “What would you like to know today?” is centered in the chat area.
 - **Thread.** The question sits on the right, in the pale mint fill, with green text. The answer sits on the left, on a white card: the reply, one source link, then the fetch-date line. “Facts only.” is removed from the text shown in the bubble. The API response may still start with that phrase.
 - **Suggested questions.** Three questions in one row, in the chat area, not inside the input. They do not scroll with the thread. Each scheme card names the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. HDFC AMC Overview shows “About HDFC Mutual Fund?”, the SEBI-approval question, and the CEO question. An X removes that question until New chat and does not reveal a fourth. ELSS shows lock-in period, expense ratio, and minimum SIP. Mid Cap and Flexi Cap show exit load, expense ratio, and benchmark. Large Cap shows expense ratio, exit load, and benchmark.
@@ -606,12 +606,12 @@ The green is `#00D09C`. Pale fills stay `#EAF9F5` so the words sit on a light ca
 
 | Role | Value |
 | --- | --- |
-| Green text, borders, and icons | `#00D09C` on Mutual Funds, New chat, links, the send icon, selected scheme text, and the rising arrow |
+| Green text, borders, and icons | `#00D09C` on Mutual Fund, New chat, links, the send icon, selected scheme text, and the rising arrow |
 | Pale mint fill | `#EAF9F5` on New chat, the user’s bubble, the send button, and the selected scheme card |
 | Text | `#171A2C` for Assistant and titles, `#44475B` for body, `#7C7E8C` for the disclaimer and secondary lines |
 | Canvas and card | `#F8F8F8` canvas, `#FFFFFF` card, 1px border `#E9E9EB` |
 | Error | `#EB5B3C` is reserved for an error state. It is not a trade colour |
-| Type | Inter. Chat copy is 14px. “Mutual Funds” is green at weight 700. “Knowledge Assistant” is dark at weight 600 |
+| Type | Inter. Chat copy is 14px. “Mutual Fund” is green at weight 700. “Knowledge Assistant” is dark at weight 600 |
 
 Motion is a short ease on the rail width and on a new message. It is turned off when the system asks for reduced motion.
 

@@ -278,7 +278,7 @@ One page, `web/index.html`, served at `/`. The Stitch screens in `stitch_groww_r
 
 The chat column scrolls. “Choose a scheme” stays fixed above it. The rail, the three questions, the input, and the disclaimer do not move with the thread.
 
-- Left rail: a `#00D09C` rising arrow, then “Mutual Funds” in `#00D09C` and “Knowledge Assistant” in `#171A2C`. The panel control collapses the rail to the logo. “New chat” is left-aligned and clears this tab’s thread. “Recent chats” lists questions newest first. Choosing one scrolls to that turn.
+- Left rail: a `#00D09C` rising arrow, then “Mutual Fund” in `#00D09C` and “Knowledge Assistant” in `#171A2C`. The panel control collapses the rail to the logo. “New chat” is left-aligned and clears this tab’s thread. “Recent chats” lists questions newest first. Choosing one scrolls to that turn.
 - Empty state, centered: “What would you like to know today?”
 - The user’s question is on the right. The answer, one source link, and the date line are on the left. The bubble does not show a leading “Facts only.”
 - Three questions sit in one row in the chat area, above the input and not inside it. They stay fixed while the thread scrolls. A scheme card includes the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. HDFC AMC Overview uses “About HDFC Mutual Fund?”, the SEBI-approval question, and the CEO question. An X hides one until New chat and does not reveal a fourth. A typed scheme question still gets `for {selected scheme}?` appended when it does not already name a scheme. With HDFC AMC Overview selected, that suffix is `for the HDFC Mutual Fund fund house?`.
