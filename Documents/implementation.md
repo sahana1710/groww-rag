@@ -268,7 +268,7 @@ Two facts in one question (riskometer and benchmark) are two filtered queries, m
 
 Send `prompts/system.md` plus the retrieved passages. The prompt says: use only the passages, one URL, at most three sentences, end with `Last updated from sources: YYYY-MM-DD` using the page fetch date. Temperature 0.1. On Groq, `reasoning_effort` is `none`. Default model `qwen/qwen3.8-27b`. Gemini, OpenAI, Anthropic, and Mistral are the same `complete(system, user)` interface, selected with `LLM_PROVIDER`. No silent swap if the model id is rejected.
 
-Then check the draft. Reject it, and show the fixed template instead, when any of these fail: more than one URL, a URL that was not retrieved, a missing or wrong date, more than three sentences, or a number that is not in the cited chunk. For a mixed fact-plus-advice question the draft must start with “Facts only.” and must not say buy, sell, or hold.
+Then check the draft. Reject it, and show the fixed template instead, when any of these fail: more than one URL, a URL that was not retrieved, a missing or wrong date, more than three sentences, or a number that is not in the cited chunk. For a mixed fact-plus-advice question the draft must start with “Facts only.” and must not say buy, sell, or hold. A “how to invest in HDFC” question is not sent to the model. The reply lists every numbered Groww step from the HDFC Mutual Fund page, then the source link and the fetch date. An “about HDFC Mutual Fund” question is also answered from that page’s overview text: three factual sentences, with no suggestion and no extra scheme.
 
 Write `data/traces/<id>.json` with the action, filters, hits, whether the LLM was called, the draft, the checker result, and the final text.
 
@@ -278,7 +278,7 @@ One page, `web/index.html`, served at `/`. The Stitch screens in `stitch_groww_r
 
 The chat column scrolls. “Choose a scheme” stays fixed above it. The rail, the three questions, the input, and the disclaimer do not move with the thread.
 
-- Left rail: the Groww circle mark, then “Groww” in `#00D09C` and “Assistant” in `#171A2C`. The panel control collapses the rail to the logo. “New chat” is left-aligned and clears this tab’s thread. “Recent chats” lists questions newest first. Choosing one scrolls to that turn.
+- Left rail: a `#00D09C` rising arrow, then “Mutual Funds” in `#00D09C` and “Knowledge Assistant” in `#171A2C`. The panel control collapses the rail to the logo. “New chat” is left-aligned and clears this tab’s thread. “Recent chats” lists questions newest first. Choosing one scrolls to that turn.
 - Empty state, centered: “What would you like to know today?”
 - The user’s question is on the right. The answer, one source link, and the date line are on the left. The bubble does not show a leading “Facts only.”
 - Three questions sit in one row in the chat area, above the input and not inside it. They stay fixed while the thread scrolls. A scheme card includes the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. HDFC AMC Overview uses “About HDFC Mutual Fund?”, the SEBI-approval question, and the CEO question. An X hides one until New chat and does not reveal a fourth. A typed scheme question still gets `for {selected scheme}?` appended when it does not already name a scheme. With HDFC AMC Overview selected, that suffix is `for the HDFC Mutual Fund fund house?`.

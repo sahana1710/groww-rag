@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -19,6 +20,9 @@ from app.retrieve.search import Hit, retrieve
 from app.store.layout import IndexNotReady, assert_ready_for_ask, chunks_path, read_pipeline, traces_dir
 
 LOGGER = logging.getLogger(__name__)
+STEP_RE = re.compile(r"^Step\s+(\d+)\.\s*(.+)$", re.IGNORECASE)
+SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
+OVERVIEW_SKIP = ("why invest", "sign up", "expert recommendation", "zero fees", "how to invest", "looking to invest")
 TEMPLATES = {
     "pii": "pii",
     "jailbreak": "advice",
@@ -49,6 +53,85 @@ def _pages(root: Path) -> tuple[dict[str, tuple[str, str]], tuple[str, str]]:
         if chunk.get("source_id") == "hdfc-amc" and url:
             amc = (url, fetched)
     return schemes, amc
+
+
+def _invest_steps(root: Path) -> tuple[str, str, str, list[dict]]:
+    found: list[tuple[int, str, dict]] = []
+    url = ""
+    fetched = ""
+    for line in chunks_path(root).read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        chunk = json.loads(line)
+        if chunk.get("source_id") != "hdfc-amc":
+            continue
+        text = re.sub(r"\s+([.,])", r"\1", " ".join(str(chunk.get("text") or "").split()))
+        match = STEP_RE.match(text)
+        if not match:
+            continue
+        found.append((int(match.group(1)), match.group(2).strip(), chunk))
+        url = chunk.get("source_url") or url
+        fetched = chunk.get("fetched_at") or fetched
+    found.sort(key=lambda item: item[0])
+    body = "\n".join(f"Step {number}. {text}" for number, text, _chunk in found)
+    final = f"{body}\nSource: {url}\nLast updated from sources: {fetched}."
+    hits = [
+        {
+            "chunk_id": chunk.get("chunk_id") or "",
+            "chroma_distance": None,
+            "fact_type": "amc_overview",
+            "source_url": url,
+            "text": f"Step {number}. {text}",
+        }
+        for number, text, chunk in found
+    ]
+    return final, url, fetched, hits
+
+
+def _is_overview(question: str) -> bool:
+    text = question.lower()
+    return any(phrase in text for phrase in ("about hdfc", "overview of hdfc", "hdfc amc overview", "what is hdfc mutual fund", "tell me about hdfc"))
+
+
+def _overview_sentences(text: str) -> list[str]:
+    flat = re.sub(r"\s+", " ", text).strip()
+    flat = flat.replace("Company Ltd., or HDFC Mutual Fund, is currently", "HDFC Mutual Fund is currently")
+    kept = []
+    for part in SENTENCE_RE.split(flat):
+        sentence = part.strip()
+        if len(sentence) < 40 or any(phrase in sentence.lower() for phrase in OVERVIEW_SKIP):
+            continue
+        kept.append(sentence if sentence.endswith(".") else sentence + ".")
+    return kept[:3]
+
+
+def _fund_house_overview(root: Path) -> tuple[str, str, str, list[dict]]:
+    url = ""
+    fetched = ""
+    sentences: list[str] = []
+    hits: list[dict] = []
+    for line in chunks_path(root).read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        chunk = json.loads(line)
+        if chunk.get("source_id") != "hdfc-amc" or "received approval to act as an AMC" not in str(chunk.get("text") or ""):
+            continue
+        sentences = _overview_sentences(str(chunk.get("text") or ""))
+        url = chunk.get("source_url") or ""
+        fetched = chunk.get("fetched_at") or ""
+        hits = [
+            {
+                "chunk_id": chunk.get("chunk_id") or "",
+                "chroma_distance": None,
+                "fact_type": "amc_overview",
+                "source_url": url,
+                "text": " ".join(sentences),
+            }
+        ]
+        break
+    body = " ".join(sentences)
+    final = f"{body}\nSource: {url}\nLast updated from sources: {fetched}."
+    return final, url, fetched, hits
 
 
 def _fill(template: str, url: str, fetched_at: str) -> str:
@@ -165,6 +248,26 @@ def ask(question: str, root: Path | None = None, search=None, complete=None) -> 
     if decision.action == "narrow":
         payload["final_text"] = _fill(templates["narrow"], amc[0], amc[1])
         payload["source_url"], payload["fetched_at"] = amc
+        return _response(payload, _trace(root, payload))
+
+    if decision.reason == "invest_steps":
+        final, url, fetched, hits = _invest_steps(root)
+        payload["filters"] = {"fact_type": ["amc_overview"], "steps": True}
+        payload["hits"] = hits
+        payload["source_url"] = url
+        payload["fetched_at"] = fetched
+        payload["draft"] = final
+        payload["final_text"] = final
+        return _response(payload, _trace(root, payload))
+
+    if decision.reason == "amc_overview" and _is_overview(decision.question_redacted):
+        final, url, fetched, hits = _fund_house_overview(root)
+        payload["filters"] = {"fact_type": ["amc_overview"], "overview": True}
+        payload["hits"] = hits
+        payload["source_url"] = url
+        payload["fetched_at"] = fetched
+        payload["draft"] = final
+        payload["final_text"] = final
         return _response(payload, _trace(root, payload))
 
     filters = {"fact_type": list(decision.fact_types)}

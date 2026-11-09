@@ -34,7 +34,7 @@
     }
     button, input, select { font: inherit; color: inherit; }
     button { cursor: pointer; }
-    .logo { width: 2rem; height: 2rem; display: block; border-radius: 50%; object-fit: cover; }
+    .logo { width: 2rem; height: 2rem; display: block; object-fit: contain; }
     .edge-logo {
       display: none;
       position: fixed;
@@ -59,10 +59,11 @@
     }
     .brand-name {
       font-weight: 700;
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       letter-spacing: -0.02em;
+      line-height: 1.25;
       color: var(--mint);
-      white-space: nowrap;
+      white-space: normal;
     }
     .brand-name span { color: var(--ink); font-weight: 600; }
     .collapse {
@@ -410,6 +411,14 @@
       border-bottom-left-radius: 0.3rem;
     }
     .bubble p { margin: 0 0 0.5rem; font-size: var(--chat); line-height: 1.45; }
+    .bubble ol {
+      margin: 0 0 0.5rem;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .bubble li { margin: 0; }
     .bubble p:last-child { margin-bottom: 0; }
     .bubble a {
       display: block;
@@ -471,12 +480,12 @@
     .backdrop { display: none; }
     @media (prefers-reduced-motion: no-preference) {
       .rail { transition: width 0.28s ease; }
-      .scheme-cards-clip { transition: grid-template-rows 0.28s ease, padding-top 0.28s ease; }
+      .scheme-cards-clip { overflow: hidden; transition: grid-template-rows 0.32s ease, padding-top 0.32s ease; }
       .scheme-bar .scheme-label,
-      .scheme-selected { transition: opacity 0.2s ease; }
-      .scheme-toggle .material-symbols-outlined { transition: transform 0.28s ease; }
+      .scheme-selected { transition: opacity 0.24s ease; }
+      .scheme-toggle .material-symbols-outlined { transition: transform 0.32s ease; }
       .prompt, .composer, .scheme-card, .new-chat, .send { transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease; }
-      .prompt, .bubble, .empty-thread { animation: settle 0.32s ease; }
+      .empty-thread, .turn.is-new .bubble { animation: settle 0.32s ease; }
     }
     @keyframes settle {
       from { opacity: 0; transform: translateY(8px); }
@@ -510,16 +519,16 @@
 </head>
 <body>
   <button class="edge-logo" type="button" id="menu" aria-label="Open sidebar">
-    <img class="logo" src="/logo.png?v=00d09c" alt="">
+    <img class="logo" src="/logo.png?v=rising" alt="">
   </button>
   <div class="backdrop" id="backdrop"></div>
   <div class="shell">
     <aside class="rail" id="rail">
       <div class="rail-brand">
         <button class="logo-btn" type="button" id="logo-btn" aria-label="Show sidebar">
-          <img class="logo" src="/logo.png?v=00d09c" alt="">
+          <img class="logo" src="/logo.png?v=rising" alt="">
         </button>
-        <div class="brand-name">Groww <span>Assistant</span></div>
+        <div class="brand-name">Mutual Funds<br><span>Knowledge Assistant</span></div>
         <button class="collapse" type="button" id="collapse" aria-label="Hide sidebar">
           <svg class="panel-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 4v16" stroke="currentColor" stroke-width="1.6"/></svg>
         </button>
@@ -707,15 +716,14 @@
       }
       thread.forEach((turn, index) => {
         const block = document.createElement("article");
-        block.className = "turn";
+        block.className = "turn" + (index === thread.length - 1 ? " is-new" : "");
         block.id = "turn-" + index;
         const asked = document.createElement("p");
         asked.className = "bubble user";
         asked.textContent = turn.question;
         const bot = document.createElement("div");
         bot.className = "bubble bot";
-        const body = document.createElement("p");
-        body.textContent = shownAnswer(turn.answer || "Looking that up…");
+        const body = answerBody(turn.answer || "Looking that up…");
         bot.appendChild(body);
         if (turn.source) {
           const link = document.createElement("a");
@@ -757,7 +765,8 @@
     function questionForApi(text) {
       const lower = text.toLowerCase();
       const fundHouse = /\bfund house\b/.test(lower) || /\bamc\b/.test(lower) || lower.includes("about hdfc mutual fund");
-      const help = lower.includes("capital-gain") || lower.includes("capital gain") || lower.includes("tax statement") || fundHouse;
+      const invest = /\bhow to invest\b/.test(lower) || /\bsteps to invest\b/.test(lower) || /\binvest in hdfc\b/.test(lower);
+      const help = lower.includes("capital-gain") || lower.includes("capital gain") || lower.includes("tax statement") || fundHouse || invest;
       if (help || mentionsScheme(text)) return text;
       const scheme = catalog.schemes.find((item) => item.id === selectedSchemeId);
       const body = text.replace(/[\s?]+$/, "");
@@ -829,9 +838,35 @@
       return text.replace(/^Facts only\.\s*/i, "");
     }
 
+    function answerBody(text) {
+      const cleaned = shownAnswer(text);
+      if (cleaned === "Looking that up…") {
+        const note = document.createElement("p");
+        note.textContent = cleaned;
+        return note;
+      }
+      const lines = cleaned.split("\n").map((line) => line.trim()).filter(Boolean)
+        .filter((line) => !line.startsWith("Source:") && !line.startsWith("Last updated from sources:"));
+      const steps = lines.filter((line) => /^step\s+\d+\b/i.test(line));
+      if (steps.length > 1 && steps.length === lines.length) {
+        const list = document.createElement("ol");
+        steps.forEach((step) => {
+          const item = document.createElement("li");
+          item.textContent = step.replace(/^step\s+\d+\.\s*/i, "");
+          list.appendChild(item);
+        });
+        return list;
+      }
+      const paragraph = document.createElement("p");
+      paragraph.textContent = lines.join(" ");
+      return paragraph;
+    }
+
     function answerText(payload) {
       const lines = (payload.answer || "").split("\n").map((line) => line.trim()).filter(Boolean);
-      return lines.filter((line) => !line.startsWith("Source:") && !line.startsWith("Last updated from sources:")).join(" ");
+      const kept = lines.filter((line) => !line.startsWith("Source:") && !line.startsWith("Last updated from sources:"));
+      if (kept.some((line) => /^step\s+\d+\b/i.test(line))) return kept.join("\n");
+      return kept.join(" ");
     }
 
     async function submitQuestion(question) {

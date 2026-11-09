@@ -37,6 +37,8 @@ def test_classifier_covers_the_gate_order() -> None:
     assert alias.scheme_name == "HDFC Flexi Cap Direct Plan Growth"
     elss = classify("What is the lock-in on HDFC ELSS Tax Saver Fund Direct Plan Growth?", settings)
     assert elss.fact_types == ("lock_in",)
+    invest = classify("How to Invest in HDFC MF on Groww", settings)
+    assert invest.action == "answer" and invest.reason == "invest_steps"
     pair = classify("Riskometer and benchmark of HDFC ELSS", settings)
     assert pair.fact_types == ("riskometer", "benchmark")
     managers = classify("Who are the fund managers for HDFC Large Cap Fund Direct Growth?", settings)
@@ -155,3 +157,31 @@ def test_grounded_draft_is_kept(tmp_path: Path) -> None:
     assert result["inspector"]["llm_called"] is True
     assert "1.02%" in result["answer"]
     assert result["source_url"] == URL
+
+
+def test_how_to_invest_lists_every_groww_step() -> None:
+    def fail_if_called(_system: str, _user: str) -> str:
+        raise AssertionError("invest steps must not call the model")
+
+    result = ask("How to Invest in HDFC MF on Groww", ROOT, complete=fail_if_called)
+    answer = result["answer"]
+    assert "Step 1. Log-in to your Groww account" in answer
+    assert "Step 7. Click on “Invest One Time”" in answer
+    assert result["source_url"] == "https://groww.in/mutual-funds/amc/hdfc-mutual-funds"
+    assert result["fetched_at"] == "2026-11-01"
+    assert result["inspector"]["llm_called"] is False
+
+
+def test_about_hdfc_is_a_short_fact_overview() -> None:
+    def fail_if_called(_system: str, _user: str) -> str:
+        raise AssertionError("an overview must not call the model")
+
+    result = ask("About HDFC Mutual Fund", ROOT, complete=fail_if_called)
+    answer = result["answer"]
+    assert "HDFC Mutual Fund is currently the largest mutual fund" in answer
+    assert "75000" in answer
+    assert "Expert recommendation" not in answer
+    assert "should" not in answer.lower()
+    assert result["source_url"] == "https://groww.in/mutual-funds/amc/hdfc-mutual-funds"
+    assert result["fetched_at"] == "2026-11-01"
+    assert result["inspector"]["llm_called"] is False
