@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap">
   <style>
     :root {
-      --mint: #24543F;
+      --mint: #00D09C;
       --mint-tint: #EAF9F5;
       --on-mint: #EAF9F5;
       --text: #44475b;
@@ -34,7 +34,7 @@
     }
     button, input, select { font: inherit; color: inherit; }
     button { cursor: pointer; }
-    .logo { width: 2rem; height: 2rem; display: block; }
+    .logo { width: 2rem; height: 2rem; display: block; border-radius: 50%; object-fit: cover; }
     .edge-logo {
       display: none;
       position: fixed;
@@ -61,10 +61,10 @@
       font-weight: 700;
       font-size: 1.05rem;
       letter-spacing: -0.02em;
-      color: var(--ink);
+      color: var(--mint);
       white-space: nowrap;
     }
-    .brand-name span { color: var(--mint); font-weight: 600; }
+    .brand-name span { color: var(--ink); font-weight: 600; }
     .collapse {
       margin-left: auto;
       border: 0;
@@ -270,7 +270,7 @@
       background: var(--mint-tint);
       border-color: var(--mint);
     }
-    a, a:visited, .bubble a, .brand-name span { color: var(--mint); }
+    a, a:visited, .bubble a { color: var(--mint); }
     .prompt:hover, .prompt:focus-within, .composer:focus-within, .scheme-card:hover, .scheme-card:focus-visible {
       border-color: var(--mint);
       outline: none;
@@ -487,14 +487,14 @@
 </head>
 <body>
   <button class="edge-logo" type="button" id="menu" aria-label="Open sidebar">
-    <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#EAF9F5"/><path d="M7 22.5 13 16l4.5 3.2L25 9" fill="none" stroke="#24543F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="25" cy="9" r="1.7" fill="#24543F"/></svg>
+    <img class="logo" src="/logo.png?v=00d09c" alt="">
   </button>
   <div class="backdrop" id="backdrop"></div>
   <div class="shell">
     <aside class="rail" id="rail">
       <div class="rail-brand">
         <button class="logo-btn" type="button" id="logo-btn" aria-label="Show sidebar">
-          <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#EAF9F5"/><path d="M7 22.5 13 16l4.5 3.2L25 9" fill="none" stroke="#24543F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="25" cy="9" r="1.7" fill="#24543F"/></svg>
+          <img class="logo" src="/logo.png?v=00d09c" alt="">
         </button>
         <div class="brand-name">Groww <span>Assistant</span></div>
         <button class="collapse" type="button" id="collapse" aria-label="Hide sidebar">

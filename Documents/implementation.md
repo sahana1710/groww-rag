@@ -276,16 +276,16 @@ Write `data/traces/<id>.json` with the action, filters, hits, whether the LLM wa
 
 One page, `web/index.html`, served at `/`. The Stitch screens in `stitch_groww_rag_chatbot_ui/` are the reference. The page uses the corpus scheme names and does not copy comparison prompts, the account avatar, or “trained on SID”.
 
-The chat column scrolls. The rail, the three questions, the scheme menu, the input, and the disclaimer do not move with it.
+The chat column scrolls. “Choose a scheme” stays fixed above it. The rail, the three questions, the input, and the disclaimer do not move with the thread.
 
-- Left rail: logo and “Groww Assistant”. The panel control collapses the rail to the logo. “New chat” is left-aligned and clears this tab’s thread. “Recent chats” lists questions newest first. Choosing one scrolls to that turn.
+- Left rail: the Groww circle mark, then “Groww” in `#00D09C` and “Assistant” in `#171A2C`. The panel control collapses the rail to the logo. “New chat” is left-aligned and clears this tab’s thread. “Recent chats” lists questions newest first. Choosing one scrolls to that turn.
 - Empty state, centered: “What would you like to know today?”
 - The user’s question is on the right. The answer, one source link, and the date line are on the left. The bubble does not show a leading “Facts only.”
-- Three questions sit in one row in the chat area, above the input and not inside it. They stay fixed while the thread scrolls. Each card includes the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. An X hides one until New chat and does not reveal a fourth. A typed question still gets `for {selected scheme}?` appended when it does not already name a scheme.
+- Three questions sit in one row in the chat area, above the input and not inside it. They stay fixed while the thread scrolls. A scheme card includes the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. HDFC AMC Overview uses “About HDFC Mutual Fund?”, the SEBI-approval question, and the CEO question. An X hides one until New chat and does not reveal a fourth. A typed scheme question still gets `for {selected scheme}?` appended when it does not already name a scheme. With HDFC AMC Overview selected, that suffix is `for the HDFC Mutual Fund fund house?`.
 - “Choose a scheme” is fixed at the top of the chat. The choices are cards, with “HDFC AMC Overview” first, then the four canonical names. An arrow collapses them to the selected name. The field placeholder is “Ask Groww”.
 - One centered line under the field, with a warning icon in the same grey: “Facts only. No investment advice. Check the linked page before you act.”
 
-Colour matches the New Chat control. Pale mint fill `#EAF9F5`. Green text and icons `#24543F`. Canvas `#F8F8F8`, cards `#FFFFFF`, border `#E9E9EB`, body `#44475B`, secondary text `#7C7E8C`. Type is Inter at 14px for the chat. There is no buy or sell button and no inspector.
+Green text, borders, and icons are `#00D09C`. Pale mint fill `#EAF9F5`. Canvas `#F8F8F8`, cards `#FFFFFF`, border `#E9E9EB`, body `#44475B`, secondary text `#7C7E8C`. Type is Inter at 14px for the chat. There is no buy or sell button and no inspector.
 
 The page posts only the current question. If the index is not ready, say so. On a provider error: “The assistant could not complete that question. Your question was not sent to a fund-recommendation system.”
 
@@ -351,6 +351,7 @@ Manual checks after `pipeline` and a real `ask`:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.5 | 9 November 2026 | UI section updated for the top scheme cards, the Groww circle mark, and green `#00D09C`. |
 | 1.4 | 1 November 2026 | UI section rewritten to the shipped chat page: three short questions, scheme menu, and the New Chat green. |
 | 1.3 | 1 November 2026 | UI section now follows the Stitch export and the Mint Financial System. Suggested questions stay single-scheme facts. |
 | 1.2 | 1 November 2026 | Added document loading between scrape and chunk. Chunking reads `documents.jsonl`. |

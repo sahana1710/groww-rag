@@ -44,6 +44,11 @@ def home() -> FileResponse:
     return FileResponse(_index_file())
 
 
+@app.get("/logo.png")
+def logo() -> FileResponse:
+    return FileResponse(repo_root() / "web" / "logo.png")
+
+
 @app.get("/api/health")
 def health() -> JSONResponse:
     settings = load_settings()

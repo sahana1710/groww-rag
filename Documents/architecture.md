@@ -146,7 +146,7 @@ flowchart TB
 | `app/llm/base.py` | `complete(system, user) -> str`. |
 | `app/llm/factory.py` | Build the client named by `LLM_PROVIDER`. |
 | `app/store/layout.py` | Paths, watermarks, trace writer. |
-| `web/index.html` | Chat page: scheme menu, three short questions, thread, tab-local history. |
+| `web/index.html` | Chat page: scheme cards, three questions, thread, tab-local history. The mark is `web/logo.png`. |
 | `prompts/system.md` | Reviewed prompt. Not buried in Python. |
 | `sources/sources.csv` | The only URL allow-list the loader will fetch. |
 
@@ -583,17 +583,17 @@ One file per request: `data/traces/<utc timestamp>-<short id>.json`.
 
 ## 9. UI
 
-`web/index.html` is one static page. FastAPI serves it at `/`. There is no frontend build, no account, and no second route. The Stitch export in `stitch_groww_rag_chatbot_ui/` is the layout reference. The shipped page does not copy its placeholder scheme names, comparison prompts, account avatar, or “trained on SID” line.
+`web/index.html` is one static page. FastAPI serves it at `/` and the Groww mark at `/logo.png`. There is no frontend build and no account. The Stitch export in `stitch_groww_rag_chatbot_ui/` is the layout reference. The shipped page does not copy its placeholder scheme names, comparison prompts, account avatar, or “trained on SID” line.
 
-The page is a chat. The left rail stays put. The thread scrolls on its own. The suggested questions, the scheme menu, the input, and the disclaimer stay fixed under the thread.
+The page is a chat. The left rail stays put. The thread scrolls on its own. “Choose a scheme” stays fixed above the thread. The suggested questions, the input, and the disclaimer stay fixed under it.
 
 ### Layout
 
-- **Rail.** A pale mint tile with a rising chart, then “Groww Assistant”. A square-with-a-bar control collapses the rail to the logo. Clicking the logo opens it again. On a narrow window the logo opens the rail as an overlay. “New chat” is left-aligned. “Recent chats” lists questions from this browser tab, newest first, with no “This tab” line. Choosing one scrolls to that turn. It does not ask again.
+- **Rail.** The Groww mark is a circle, blue on top and `#00D09C` below, split by the notched wave. Beside it, “Groww” is `#00D09C` and “Assistant” is `#171A2C`. A square-with-a-bar control collapses the rail to the logo. Clicking the logo opens it again. On a narrow window the logo opens the rail as an overlay. “New chat” is left-aligned. “Recent chats” lists questions from this browser tab, newest first, with no “This tab” line. Choosing one scrolls to that turn. It does not ask again.
 - **Empty chat.** The line “What would you like to know today?” is centered in the chat area.
 - **Thread.** The question sits on the right, in the pale mint fill, with green text. The answer sits on the left, on a white card: the reply, one source link, then the fetch-date line. “Facts only.” is removed from the text shown in the bubble. The API response may still start with that phrase.
-- **Suggested questions.** Three questions in one row, in the chat area, not inside the input. They do not scroll with the thread. Each card names the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. An X removes that question until New chat and does not reveal a fourth. ELSS shows lock-in period, expense ratio, and minimum SIP. Mid Cap and Flexi Cap show exit load, expense ratio, and benchmark. Large Cap shows expense ratio, exit load, and benchmark.
-- **Asking.** A click or a typed question is one `POST /api/ask`. If the text does not already name a scheme, and it is not a capital-gains or fund-house question, the page appends `for {selected scheme}?` before sending. The bubble shows the words the user chose. The thread is kept in `sessionStorage` under `groww-rag-thread`, up to 20 turns. New chat clears that thread and restores the three questions.
+- **Suggested questions.** Three questions in one row, in the chat area, not inside the input. They do not scroll with the thread. Each scheme card names the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. HDFC AMC Overview shows “About HDFC Mutual Fund?”, the SEBI-approval question, and the CEO question. An X removes that question until New chat and does not reveal a fourth. ELSS shows lock-in period, expense ratio, and minimum SIP. Mid Cap and Flexi Cap show exit load, expense ratio, and benchmark. Large Cap shows expense ratio, exit load, and benchmark.
+- **Asking.** A click or a typed question is one `POST /api/ask`. If the text does not already name a scheme, and it is not a capital-gains or fund-house question, the page appends `for {selected scheme}?` before sending. With HDFC AMC Overview selected, a typed question that does not already name the fund house is sent as `for the HDFC Mutual Fund fund house?`. The bubble shows the words on the card, or the typed words. The thread is kept in `sessionStorage` under `groww-rag-thread`, up to 20 turns. New chat clears that thread and restores the three questions.
 - **Scheme menu.** “Choose a scheme” sits at the top of the chat and does not scroll. The five choices are cards, with “HDFC AMC Overview” first, then the four Direct Growth schemes. An arrow collapses the cards so only the selected name remains. Choosing HDFC AMC Overview asks about the fund house, not one of the four schemes.
 - **Input.** Its own field. Placeholder: “Ask Groww”. The send control uses the same pale mint as New chat.
 - **Disclaimer.** One centered line under the field, not inside it, with a warning icon in the same grey as the words: “Facts only. No investment advice. Check the linked page before you act.”
@@ -602,16 +602,16 @@ There is no “How this answer was produced” panel.
 
 ### Colour and type
 
-The green is the New Chat green, not the bright `#00D09C` fill.
+The green is `#00D09C`. Pale fills stay `#EAF9F5` so the words sit on a light card.
 
 | Role | Value |
 | --- | --- |
-| Green text and icons | `#24543F` on Assistant, New chat, links, the send icon, and the chart mark |
-| Pale mint fill | `#EAF9F5` on New chat, the user’s bubble, the send button, and the logo tile |
-| Text | `#171A2C` for titles, `#44475B` for body, `#7C7E8C` for the disclaimer and secondary lines |
+| Green text, borders, and icons | `#00D09C` on Groww, New chat, links, the send icon, selected scheme text, and the lower half of the mark |
+| Pale mint fill | `#EAF9F5` on New chat, the user’s bubble, the send button, and the selected scheme card |
+| Text | `#171A2C` for Assistant and titles, `#44475B` for body, `#7C7E8C` for the disclaimer and secondary lines |
 | Canvas and card | `#F8F8F8` canvas, `#FFFFFF` card, 1px border `#E9E9EB` |
 | Error | `#EB5B3C` is reserved for an error state. It is not a trade colour |
-| Type | Inter. Chat copy is 14px. “Groww Assistant” is 20px at weight 700 |
+| Type | Inter. Chat copy is 14px. “Groww” is green at weight 700. “Assistant” is dark at weight 600 |
 
 Motion is a short ease on the rail width and on a new message. It is turned off when the system asks for reduced motion.
 
@@ -692,6 +692,7 @@ A customer release would remove the stage inspector, put the process behind Grow
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.3 | 9 November 2026 | UI section updated for the top scheme cards, the Groww circle mark, and green `#00D09C`. |
 | 1.2 | 1 November 2026 | UI section rewritten to the shipped chat page: rail, three short questions, scheme menu, and the New Chat green. |
 | 1.1 | 1 November 2026 | UI section now follows the Stitch export and the Mint Financial System. Scheme names and the single-question ask path stay as specified. |
 | 1.0 | 1 November 2026 | Architecture for the inspectable local RAG prototype described in the PRD. |
