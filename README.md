@@ -6,7 +6,7 @@ A facts-only assistant for four HDFC Mutual Fund Direct Growth schemes, plus the
 
 The same disclaimer is always visible on the page. The collapsed panel “How this answer was produced” shows the RAG stage for the current question. It is there for this milestone and is not a customer feature.
 
-Hosted demo: https://groww-rag-beige.vercel.app
+Hosted demo: https://mutual-fund-assistant-beige.vercel.app
 
 ## Setup
 
