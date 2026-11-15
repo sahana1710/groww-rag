@@ -843,7 +843,7 @@
 
     function questionForApi(text, follow) {
       const lower = text.toLowerCase();
-      const fundHouse = /\bfund house\b/.test(lower) || /\bamc\b/.test(lower) || lower.includes("about hdfc mutual fund");
+      const fundHouse = /\bfund house\b/.test(lower) || /\bamc\b/.test(lower) || lower.includes("about hdfc mutual fund") || /\btrustees?\b/.test(lower);
       const invest = /\bhow to invest\b/.test(lower) || /\bsteps to invest\b/.test(lower) || /\binvest in hdfc\b/.test(lower);
       const help = lower.includes("capital-gain") || lower.includes("capital gain") || lower.includes("tax statement") || fundHouse || invest;
       if (help || schemesMentioned(text).length > 0) return text;

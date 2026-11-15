@@ -11,6 +11,7 @@ URL_RE = re.compile(r"https?://[^\s)>\]]+")
 DATE_RE = re.compile(r"^Last updated from sources: (\d{4}-\d{2}-\d{2})\.?$")
 NUMBER_RE = re.compile(r"\d+(?:,\d+)*(?:\.\d+)?%?")
 SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
+ABBREVIATION_RE = re.compile(r"\b(Mr|Mrs|Ms|Dr|Ltd|Inc|Co|Sr|Jr|No|St|vs|Rs|Cr)\.", re.IGNORECASE)
 REFUSAL_NEAR = (
     "cannot",
     "can't",
@@ -48,6 +49,11 @@ def _recommends(draft: str) -> bool:
     return False
 
 
+def _sentences(body: str) -> list[str]:
+    protected = ABBREVIATION_RE.sub(lambda match: match.group(0).replace(".", "\0"), body)
+    return [part.replace("\0", ".").strip() for part in SENTENCE_RE.split(protected.strip()) if part.strip()]
+
+
 def _body(text: str) -> str:
     lines = [line for line in text.splitlines() if line.strip() and not line.startswith("Source:") and not line.startswith("Last updated from sources:")]
     return "\n".join(lines)
@@ -80,7 +86,7 @@ def check_draft(
     elif match.group(1) != fetched_at:
         failures.append("date_truth")
 
-    sentences = [part for part in SENTENCE_RE.split(_body(draft).strip()) if part.strip()]
+    sentences = _sentences(_body(draft))
     if len(sentences) > 3:
         failures.append("too_long")
 

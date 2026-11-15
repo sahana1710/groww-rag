@@ -37,6 +37,9 @@ def test_classifier_covers_the_gate_order() -> None:
     assert alias.scheme_name == "HDFC Flexi Cap Direct Plan Growth"
     elss = classify("What is the lock-in on HDFC ELSS Tax Saver Fund Direct Plan Growth?", settings)
     assert elss.fact_types == ("lock_in",)
+    trustees = classify("trustees names for HDFC ELSS Tax Saver Fund Direct Plan Growth?", settings)
+    assert trustees.action == "answer" and trustees.reason == "amc_overview"
+    assert trustees.scheme_name == ""
     invest = classify("How to Invest in HDFC MF on Groww", settings)
     assert invest.action == "answer" and invest.reason == "invest_steps"
     pair = classify("Riskometer and benchmark of HDFC ELSS", settings)
@@ -73,6 +76,12 @@ def test_checker_rejects_a_wrong_number_and_a_second_link() -> None:
         "Last updated from sources: 2026-11-01."
     )
     assert check_draft(three, action="answer", allowed_urls={URL}, passages=passages, fetched_at="2026-11-01", settings=settings).passed
+    titles = (
+        "Facts only. The trustees are Mr. Vimal Bhandari, Mr. V. Srinivasa Rangan, Mr. Mehernosh Kapadia, and Mr. Dindayal Jalan.\n"
+        f"Source: {URL}\n"
+        "Last updated from sources: 2026-11-01."
+    )
+    assert check_draft(titles, action="answer", allowed_urls={URL}, passages=passages, fetched_at="2026-11-01", settings=settings).passed
     missing_period = good.replace("2026-11-01.", "2026-11-01")
     assert check_draft(
         missing_period, action="answer", allowed_urls={URL}, passages=passages, fetched_at="2026-11-01", settings=settings

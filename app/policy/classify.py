@@ -166,6 +166,8 @@ def classify(question: str, settings: Settings) -> Decision:
         return decision("answer", "statement_download", ("statement_download",))
     if not facts and any(_has(text, phrase) for phrase in ("fund house", "amc", "about hdfc mutual fund")):
         return decision("answer", "amc_overview", ("amc_overview",))
+    if not facts and any(_has(text, phrase) for phrase in ("trustee", "trustees")):
+        return Decision("answer", "amc_overview", "", ("amc_overview",), redacted)
     if not facts and any(_has(text, phrase) for phrase in ("how to invest", "steps to invest", "invest in hdfc")):
         return decision("answer", "invest_steps", ("amc_overview",))
     if len(schemes) > 1:
