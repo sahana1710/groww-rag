@@ -8,14 +8,14 @@ from pathlib import Path
 from app.store.layout import repo_root
 
 QUESTIONS = (
+    "About HDFC Mutual Fund",
+    "How to Invest in HDFC MF on Groww",
     "What is the expense ratio of HDFC Large Cap Fund Direct Growth?",
     "What is the lock-in on HDFC ELSS Tax Saver Fund Direct Plan Growth?",
+    "What is the exit load of HDFC Mid Cap Fund Direct Growth?",
+    "What is the minimum SIP for HDFC Flexi Cap Direct Plan Growth?",
     "How do I download a capital-gains statement on Groww?",
-    "What is the minimum SIP for HDFC Mid Cap Fund Direct Growth?",
     "Should I buy HDFC Flexi Cap?",
-    "Which fund has the highest return?",
-    "What's the expense ratio?",
-    "My PAN is ABCDE1234F, fetch my statement",
 )
 
 PAN = "ABCDE1234F"

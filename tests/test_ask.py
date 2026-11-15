@@ -168,7 +168,7 @@ def test_how_to_invest_lists_every_groww_step() -> None:
     assert "Step 1. Log-in to your Groww account" in answer
     assert "Step 7. Click on “Invest One Time”" in answer
     assert result["source_url"] == "https://groww.in/mutual-funds/amc/hdfc-mutual-funds"
-    assert result["fetched_at"] == "2026-11-01"
+    assert f"Last updated from sources: {result['fetched_at']}" in result["answer"]
     assert result["inspector"]["llm_called"] is False
 
 
@@ -183,5 +183,5 @@ def test_about_hdfc_is_a_short_fact_overview() -> None:
     assert "Expert recommendation" not in answer
     assert "should" not in answer.lower()
     assert result["source_url"] == "https://groww.in/mutual-funds/amc/hdfc-mutual-funds"
-    assert result["fetched_at"] == "2026-11-01"
+    assert f"Last updated from sources: {result['fetched_at']}" in result["answer"]
     assert result["inspector"]["llm_called"] is False
