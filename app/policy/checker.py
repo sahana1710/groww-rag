@@ -11,6 +11,20 @@ URL_RE = re.compile(r"https?://[^\s)>\]]+")
 DATE_RE = re.compile(r"^Last updated from sources: (\d{4}-\d{2}-\d{2})\.?$")
 NUMBER_RE = re.compile(r"\d+(?:,\d+)*(?:\.\d+)?%?")
 SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
+REFUSAL_NEAR = (
+    "cannot",
+    "can't",
+    "can’t",
+    "won't",
+    "won’t",
+    "do not",
+    "don't",
+    "don’t",
+    "not advise",
+    "not recommend",
+    "whether to",
+    "whether you",
+)
 
 
 @dataclass(frozen=True)
@@ -22,6 +36,16 @@ class Check:
 
 def _urls(text: str) -> list[str]:
     return [url.rstrip(".,") for url in URL_RE.findall(text)]
+
+
+def _recommends(draft: str) -> bool:
+    """A buy, sell, or hold word counts only when it is not inside a refusal."""
+    for word in ("buy", "sell", "hold"):
+        for match in re.finditer(rf"\b{word}\b", draft, re.IGNORECASE):
+            window = draft[max(0, match.start() - 48):match.end()].lower()
+            if not any(marker in window for marker in REFUSAL_NEAR):
+                return True
+    return False
 
 
 def _body(text: str) -> str:
@@ -71,7 +95,7 @@ def check_draft(
     if action == "answer_with_refusal":
         if "facts only." not in draft.lower():
             failures.append("missing_facts_only")
-        if any(re.search(rf"\b{word}\b", draft, re.IGNORECASE) for word in ("buy", "sell", "hold")):
+        if _recommends(draft):
             failures.append("recommendation_word")
 
     if failures == ["date_truth"] and match:

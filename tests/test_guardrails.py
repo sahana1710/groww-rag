@@ -152,7 +152,8 @@ def test_mixed_question_keeps_the_slab_and_drops_a_recommendation(tmp_path: Path
         return [hit], False
 
     kept = (
-        "Facts only. The exit load is 1% if redeemed within 1 year, otherwise Nil.\n"
+        "Facts only. I cannot advise whether you should sell. "
+        "The exit load is 1% if redeemed within 1 year, otherwise Nil.\n"
         f"Source: {FLEXI}\n"
         "Last updated from sources: 2026-11-01."
     )
@@ -167,7 +168,11 @@ def test_mixed_question_keeps_the_slab_and_drops_a_recommendation(tmp_path: Path
     assert "Facts only." in good["answer"]
     assert good["source_url"] == FLEXI
 
-    advised = kept.replace("Facts only. The exit load is", "Yes, you should sell. The exit load is")
+    advised = (
+        "Yes, you should sell. The exit load is 1% if redeemed within 1 year, otherwise Nil.\n"
+        f"Source: {FLEXI}\n"
+        "Last updated from sources: 2026-11-01."
+    )
     rejected = ask(
         "Exit load of HDFC Flexi Cap, and should I sell?",
         tmp_path,

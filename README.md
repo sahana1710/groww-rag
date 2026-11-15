@@ -67,7 +67,7 @@ Ingest embeddings use `sentence-transformers/all-MiniLM-L6-v2`. A question is em
 
 ## Scope
 
-The corpus is the HDFC Mutual Fund house page, four Direct Growth scheme pages, and one Groww Help article. `sources/sources.csv` lists those six URLs. The scraper fetches nothing else. Figures are whatever those pages said on the fetch date. They are not constants in code. The current fetch date is 2026-11-11.
+The corpus is the HDFC Mutual Fund house page, four Direct Growth scheme pages, and one Groww Help article. `sources/sources.csv` lists those six URLs. The scraper fetches nothing else. Figures are whatever those pages said on the fetch date. They are not constants in code. The current fetch date is 2026-11-16.
 
 | id | Page |
 | --- | --- |
@@ -93,15 +93,15 @@ Scheme answers can quote expense ratio, exit load, minimum SIP, minimum lump sum
 
 ## Sample Q&A
 
-[`eval/sample_qa.md`](eval/sample_qa.md) has eight queries run through `POST /api/ask` on 2026-11-15. The answers were not written by hand. Each one includes the source link and the fetch date. Regenerate it with `python -m app.cli sample`.
+[`eval/sample_qa.md`](eval/sample_qa.md) has eight queries run through `POST /api/ask`. The answers were not written by hand. Each one uses the 16 November 2026 fetch. Regenerate it with `python -m app.cli sample`.
 
-| # | Question | Source |
-| --- | --- | --- |
-| 1 | About HDFC Mutual Fund | [HDFC Mutual Fund](https://groww.in/mutual-funds/amc/hdfc-mutual-funds) |
-| 2 | How to Invest in HDFC MF on Groww | [HDFC Mutual Fund](https://groww.in/mutual-funds/amc/hdfc-mutual-funds) |
-| 3 | Expense ratio of HDFC Large Cap Fund Direct Growth | [Large Cap](https://groww.in/mutual-funds/hdfc-large-cap-fund-direct-growth) |
-| 4 | Lock-in on HDFC ELSS Tax Saver Fund Direct Plan Growth | [ELSS](https://groww.in/mutual-funds/hdfc-elss-tax-saver-fund-direct-plan-growth) |
-| 5 | Exit load of HDFC Mid Cap Fund Direct Growth | [Mid Cap](https://groww.in/mutual-funds/hdfc-mid-cap-fund-direct-growth) |
-| 6 | Minimum SIP for HDFC Flexi Cap Direct Plan Growth | [Flexi Cap](https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth) |
-| 7 | How do I download a capital-gains statement on Groww? | [Groww Help](https://groww.in/help/my-account/ma-others/where-can-i-get-the-tax-proof-for-section-80c) |
-| 8 | Should I buy HDFC Flexi Cap? | Refused. No buy, sell, or hold. |
+| # | Question | Answer | Source | Last updated |
+| --- | --- | --- | --- | --- |
+| 1 | About HDFC Mutual Fund | HDFC Mutual Fund is currently the largest mutual fund and actively managed equity mutual fund in India. It is one of the most profitable asset management companies (AMC) in the country. The company serviced more than 75000 empanelled distribution partners through 210 branches spread across more than 200 cities in India. | [HDFC Mutual Fund](https://groww.in/mutual-funds/amc/hdfc-mutual-funds) | 2026-11-16 |
+| 2 | How to Invest in HDFC MF on Groww | Step 1. Log-in to your Groww account or register if you don’t have one. Step 2. Upload your identity proof documents. Step 3. Upload your proof of address documents. Step 4. Select the investment period of your preference. Step 5. Choose your risk appetite - low, mid, or high. Step 6. Choose your preferred HDFC Bank Mutual Fund. Step 7. Click on “Invest One Time” or “Start SIP”. | [HDFC Mutual Fund](https://groww.in/mutual-funds/amc/hdfc-mutual-funds) | 2026-11-16 |
+| 3 | What is the expense ratio of HDFC Large Cap Fund Direct Growth? | The expense ratio of HDFC Large Cap Fund Direct Growth is 1.0%. | [Large Cap](https://groww.in/mutual-funds/hdfc-large-cap-fund-direct-growth) | 2026-11-16 |
+| 4 | What is the lock-in on HDFC ELSS Tax Saver Fund Direct Plan Growth? | The lock-in period is 3 years. | [ELSS](https://groww.in/mutual-funds/hdfc-elss-tax-saver-fund-direct-plan-growth) | 2026-11-16 |
+| 5 | What is the exit load of HDFC Mid Cap Fund Direct Growth? | The exit load is 1% if redeemed within 1 year. | [Mid Cap](https://groww.in/mutual-funds/hdfc-mid-cap-fund-direct-growth) | 2026-11-16 |
+| 6 | What is the minimum SIP for HDFC Flexi Cap Direct Plan Growth? | The minimum SIP is ₹100. | [Flexi Cap](https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth) | 2026-11-16 |
+| 7 | How do I download a capital-gains statement on Groww? | Go to your profile, select Reports, find Mutual Fund - Capital Gains under Tax, choose the financial year, and click Download. | [Groww Help](https://groww.in/help/my-account/ma-others/where-can-i-get-the-tax-proof-for-section-80c) | 2026-11-16 |
+| 8 | Should I buy HDFC Flexi Cap? | Refused. The assistant does not say whether to buy, sell, or hold. | [Flexi Cap](https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth) | 2026-11-16 |

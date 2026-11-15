@@ -4,6 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HDFC Mutual Fund facts</title>
+  <script>
+    try {
+      if (localStorage.getItem("groww-rag-theme") === "dark") document.documentElement.dataset.theme = "dark";
+    } catch (_error) {}
+  </script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap">
   <style>
     :root {
@@ -18,11 +23,23 @@
       --border: #e9e9eb;
       --error: #eb5b3c;
       --chat: 0.875rem;
+      color-scheme: light;
+    }
+    html[data-theme="dark"] {
+      --mint-tint: #14352c;
+      --text: #c8cad4;
+      --muted: #8b8e9c;
+      --ink: #f4f5f8;
+      --canvas: #101218;
+      --card: #1a1d27;
+      --border: #2c3040;
+      color-scheme: dark;
     }
     * { box-sizing: border-box; }
     html, body {
       height: 100%;
       overflow: hidden;
+      background: var(--canvas);
     }
     body {
       margin: 0;
@@ -187,7 +204,7 @@
       flex: none;
       align-self: stretch;
       min-height: 0;
-      overflow-y: auto;
+      overflow: hidden;
       overscroll-behavior: contain;
       background: var(--card);
       border-right: 1px solid var(--border);
@@ -197,6 +214,22 @@
       gap: 1rem;
     }
     .rail > * { flex: none; }
+    .history { flex: 1; min-height: 0; overflow-y: auto; }
+    .theme-toggle {
+      margin-top: auto;
+      align-self: flex-start;
+      width: 2.25rem;
+      height: 2.25rem;
+      border: 1px solid var(--mint);
+      border-radius: 999px;
+      background: var(--mint-tint);
+      color: var(--mint);
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+    .theme-toggle .material-symbols-outlined { font-size: 1.15rem; }
+    .rail.collapsed .theme-toggle { align-self: center; }
     .new-chat, .send, .scheme, .prompt, .scheme-card, .history button {
       border: 1px solid var(--border);
       background: var(--card);
@@ -420,13 +453,26 @@
     }
     .bubble li { margin: 0; }
     .bubble p:last-child { margin-bottom: 0; }
+    .source-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.4rem;
+      margin: 0 0 0.35rem;
+      font-size: var(--chat);
+      line-height: 1.45;
+    }
+    .source-label { font-weight: 400; }
+    .source-line,
+    .source-label,
+    .source-line a { color: var(--text); }
     .bubble a {
-      display: block;
-      margin: 0 0 0.5rem;
       color: var(--mint);
       font-size: var(--chat);
       overflow-wrap: anywhere;
     }
+    .source-line a,
+    .source-line a:visited { color: var(--text); }
     .composer-wrap {
       flex: none;
       padding: 0.85rem 1.5rem 1rem;
@@ -479,13 +525,19 @@
     }
     .backdrop { display: none; }
     @media (prefers-reduced-motion: no-preference) {
-      .rail { transition: width 0.28s ease; }
+      html, body,
+      .rail, .scheme-bar, .scheme-card, .scheme-toggle, .main, .composer, .composer-wrap,
+      .bubble, .prompt, .new-chat, .send, .history button, .theme-toggle, .disclaimer,
+      .collapse, .brand-name, .brand-name span, .bubble a, .logo-btn, .edge-logo {
+        transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+      }
+      .rail { transition: width 0.32s ease, background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease; }
       .scheme-cards-clip { overflow: hidden; transition: grid-template-rows 0.32s ease, padding-top 0.32s ease; }
       .scheme-bar .scheme-label,
-      .scheme-selected { transition: opacity 0.24s ease; }
-      .scheme-toggle .material-symbols-outlined { transition: transform 0.32s ease; }
-      .prompt, .composer, .scheme-card, .new-chat, .send { transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease; }
-      .empty-thread, .turn.is-new .bubble { animation: settle 0.32s ease; }
+      .scheme-selected { transition: opacity 0.24s ease, color 0.4s ease; }
+      .scheme-toggle .material-symbols-outlined { transition: transform 0.32s ease, color 0.4s ease; }
+      .theme-toggle .material-symbols-outlined.is-swapping { animation: settle 0.28s ease; }
+      .empty-thread, .turn.is-new .bubble, .prompt { animation: settle 0.32s ease; }
     }
     @keyframes settle {
       from { opacity: 0; transform: translateY(8px); }
@@ -538,6 +590,9 @@
       </button>
       <h2>Recent chats</h2>
       <div class="history" id="history"></div>
+      <button class="theme-toggle" type="button" id="theme-toggle" aria-pressed="false" aria-label="Switch to dark theme">
+        <span class="material-symbols-outlined" id="theme-icon" aria-hidden="true">dark_mode</span>
+      </button>
     </aside>
     <div class="stage">
     <div class="scheme-bar" id="scheme-bar">
@@ -726,12 +781,18 @@
         const body = answerBody(turn.answer || "Looking that up…");
         bot.appendChild(body);
         if (turn.source) {
+          const line = document.createElement("p");
+          line.className = "source-line";
+          const label = document.createElement("span");
+          label.className = "source-label";
+          label.textContent = "Source:";
           const link = document.createElement("a");
           link.href = turn.source;
           link.target = "_blank";
           link.rel = "noopener noreferrer";
-          link.textContent = turn.source;
-          bot.appendChild(link);
+          link.textContent = sourceTitle(turn.source);
+          line.append(label, link);
+          bot.appendChild(line);
         }
         if (turn.fetched) {
           const date = document.createElement("p");
@@ -755,6 +816,21 @@
       if (!hiddenPrompts.includes(text)) hiddenPrompts.push(text);
       sessionStorage.setItem(hiddenKey, JSON.stringify(hiddenPrompts));
       paintPrompts();
+    }
+
+    function requestedScheme(text) {
+      const lower = text.toLowerCase().replace(/[?!.]+$/g, "").trim();
+      const match = lower.match(/^(?:please\s+)?(?:change|switch|set|select|choose)(?:\s+the)?\s+scheme\s+to\s+(.+)$/);
+      if (!match) return "";
+      const name = match[1].replace(/^the\s+/, "").trim();
+      const aliases = schemeAliases.concat([
+        {id: "amc", hints: ["hdfc amc overview", "amc overview", "hdfc amc", "hdfc mutual fund", "overview"]}
+      ]);
+      const found = aliases.filter((scheme) => scheme.hints.some((hint) => {
+        const pattern = hint.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        return new RegExp("(?<![a-z0-9])" + pattern + "(?![a-z0-9])").test(name);
+      }));
+      return found.length === 1 ? found[0].id : "";
     }
 
     function schemesMentioned(text) {
@@ -841,6 +917,19 @@
       sessionStorage.setItem("groww-rag-scheme-bar", open ? "1" : "0");
     }
 
+    function sourceTitle(url) {
+      const titles = {
+        "https://groww.in/mutual-funds/amc/hdfc-mutual-funds": "HDFC Mutual Fund",
+        "https://groww.in/mutual-funds/hdfc-large-cap-fund-direct-growth": "HDFC Large Cap Fund Direct Growth",
+        "https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth": "HDFC Flexi Cap Direct Plan Growth",
+        "https://groww.in/mutual-funds/hdfc-elss-tax-saver-fund-direct-plan-growth": "HDFC ELSS Tax Saver Fund Direct Plan Growth",
+        "https://groww.in/mutual-funds/hdfc-mid-cap-fund-direct-growth": "HDFC Mid Cap Fund Direct Growth",
+        "https://groww.in/help/my-account/ma-others/where-can-i-get-the-tax-proof-for-section-80c": "Groww Help: tax proof for Section 80C"
+      };
+      const path = String(url || "").split("?")[0].replace(/\/$/, "");
+      return titles[path] || "Groww";
+    }
+
     function shownAnswer(text) {
       if (text === "Looking that up…") return text;
       return text.replace(/^Facts only\.\s*/i, "");
@@ -880,6 +969,19 @@
     async function submitQuestion(question) {
       const text = question.trim();
       if (!text) return;
+      const switchTo = requestedScheme(text);
+      if (switchTo) {
+        const scheme = catalog.schemes.find((item) => item.id === switchTo);
+        chooseScheme(switchTo);
+        input.value = "";
+        send.disabled = true;
+        thread.push({question: text, asked: text, answer: "Scheme set to " + scheme.name + ".", source: "", fetched: ""});
+        saveThread();
+        paintHistory();
+        paintThread();
+        send.disabled = !input.value.trim();
+        return;
+      }
       const apiQuestion = questionForApi(text, true);
       input.value = "";
       send.disabled = true;
@@ -924,6 +1026,22 @@
       event.preventDefault();
       submitQuestion(input.value);
     });
+    const themeToggle = document.getElementById("theme-toggle");
+    const themeIcon = document.getElementById("theme-icon");
+    function applyTheme(theme) {
+      const dark = theme === "dark";
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+      themeToggle.setAttribute("aria-pressed", dark ? "true" : "false");
+      themeToggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+      themeIcon.textContent = dark ? "light_mode" : "dark_mode";
+      themeIcon.classList.remove("is-swapping");
+      void themeIcon.offsetWidth;
+      themeIcon.classList.add("is-swapping");
+      try { localStorage.setItem("groww-rag-theme", dark ? "dark" : "light"); } catch (_error) {}
+    }
+    applyTheme(localStorage.getItem("groww-rag-theme") === "dark" ? "dark" : "light");
+    themeToggle.addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
     document.getElementById("new-chat").addEventListener("click", () => {
       input.value = "";
       send.disabled = true;
