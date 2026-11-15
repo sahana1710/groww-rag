@@ -656,11 +656,11 @@
     let selectedSchemeId = catalog.schemes.some((item) => item.id === sessionStorage.getItem(schemeKey))
       ? sessionStorage.getItem(schemeKey)
       : catalog.schemes[0].id;
-    const schemeHints = [
-      "hdfc large cap fund direct growth", "large cap",
-      "hdfc flexi cap direct plan growth", "flexi cap", "hdfc equity fund",
-      "hdfc elss tax saver fund direct plan growth", "elss", "tax saver",
-      "hdfc mid cap fund direct growth", "mid cap"
+    const schemeAliases = [
+      {id: "large", hints: ["hdfc large cap fund direct growth", "large cap"]},
+      {id: "flexi", hints: ["hdfc flexi cap direct plan growth", "flexi cap", "hdfc equity fund"]},
+      {id: "elss", hints: ["hdfc elss tax saver fund direct plan growth", "elss", "tax saver"]},
+      {id: "mid", hints: ["hdfc mid cap fund direct growth", "mid cap"]}
     ];
     function loadThread() {
       try { return JSON.parse(sessionStorage.getItem(threadKey) || "[]"); }
@@ -757,18 +757,26 @@
       paintPrompts();
     }
 
-    function mentionsScheme(text) {
+    function schemesMentioned(text) {
       const lower = text.toLowerCase();
-      return schemeHints.some((hint) => new RegExp("(?<![a-z0-9])" + hint + "(?![a-z0-9])").test(lower));
+      return schemeAliases.filter((scheme) => scheme.hints.some((hint) => {
+        const pattern = hint.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        return new RegExp("(?<![a-z0-9])" + pattern + "(?![a-z0-9])").test(lower);
+      })).map((scheme) => scheme.id);
     }
 
-    function questionForApi(text) {
+    function questionForApi(text, follow) {
       const lower = text.toLowerCase();
       const fundHouse = /\bfund house\b/.test(lower) || /\bamc\b/.test(lower) || lower.includes("about hdfc mutual fund");
       const invest = /\bhow to invest\b/.test(lower) || /\bsteps to invest\b/.test(lower) || /\binvest in hdfc\b/.test(lower);
       const help = lower.includes("capital-gain") || lower.includes("capital gain") || lower.includes("tax statement") || fundHouse || invest;
-      if (help || mentionsScheme(text)) return text;
-      const scheme = catalog.schemes.find((item) => item.id === selectedSchemeId);
+      if (help || schemesMentioned(text).length > 0) return text;
+      let schemeId = selectedSchemeId;
+      if (follow) {
+        const prior = [...thread].reverse().find((turn) => schemesMentioned(turn.asked || turn.question).length === 1);
+        if (prior) schemeId = schemesMentioned(prior.asked || prior.question)[0];
+      }
+      const scheme = catalog.schemes.find((item) => item.id === schemeId);
       const body = text.replace(/[\s?]+$/, "");
       if (scheme.id === "amc") return body + " for the HDFC Mutual Fund fund house?";
       return body + " for " + scheme.name + "?";
@@ -872,9 +880,10 @@
     async function submitQuestion(question) {
       const text = question.trim();
       if (!text) return;
+      const apiQuestion = questionForApi(text, true);
       input.value = "";
       send.disabled = true;
-      thread.push({question: text, answer: "Looking that up…", source: "", fetched: ""});
+      thread.push({question: text, asked: apiQuestion, answer: "Looking that up…", source: "", fetched: ""});
       saveThread();
       paintHistory();
       paintThread();
@@ -883,7 +892,7 @@
         const response = await fetch("/api/ask", {
           method: "POST",
           headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({question: questionForApi(text)})
+          body: JSON.stringify({question: apiQuestion})
         });
         const payload = response.status === 200 || response.status === 400 ? await response.json() : {};
         if (response.status === 503) {

@@ -82,7 +82,8 @@ Scheme answers can quote expense ratio, exit load, minimum SIP, minimum lump sum
 
 ## Known limits
 
-- One question per request. A follow-up such as “and the exit load?” needs the scheme name again.
+- A follow-up in the same chat, such as “and the exit load?”, keeps the scheme from the previous question. A new chat starts fresh. A question that names a different scheme uses that scheme.
+- The schemes cannot be compared with each other. A question that asks which scheme is higher, lower, or better is outside this version.
 - Advice, salary allocation, ranking, other fund houses, and account identifiers are refused before retrieval.
 - A number in an answer has to appear in the cited chunk. If the draft fails that check, the page says the fact was not found.
 - Answers match the last fetch, not a later edit on the Groww page. Run `python -m app.cli pipeline` to catch up.
