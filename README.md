@@ -2,9 +2,6 @@
 
 A facts-only chat assistant for the HDFC Mutual Fund house page and four HDFC Direct Growth schemes. Pick a scheme, ask in plain English, and get a short answer quoted from a public page, with the source link.
 
-![Demo](docs/demo.gif)
-<!-- Replace docs/demo.gif with your screenshot or GIF, or delete this line -->
-
 **Live demo:** https://mutual-fund-assistant-beige.vercel.app
 
 | | |
