@@ -97,21 +97,7 @@ Source: https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth
 Last updated from sources: 2026-11-16
 ```
 
-## 7. How do I download a capital-gains statement on Groww?
-
-- Action: `answer`
-- LLM called: `True`
-- Source: https://groww.in/help/my-account/ma-others/where-can-i-get-the-tax-proof-for-section-80c
-- Fetched: 2026-11-16
-- Trace: `data/traces/20261115T185448Z-0a4d.json`
-
-```
-Facts only. To download a capital-gains statement on Groww, go to your profile, select 'Reports', find 'Mutual Fund - Capital Gains' under 'Tax', choose the financial year, and click 'Download'.
-Source: https://groww.in/help/my-account/ma-others/where-can-i-get-the-tax-proof-for-section-80c
-Last updated from sources: 2026-11-16
-```
-
-## 8. Should I buy HDFC Flexi Cap?
+## 7. Should I buy HDFC Flexi Cap?
 
 - Action: `refuse`
 - LLM called: `False`
