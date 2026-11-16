@@ -76,7 +76,6 @@ The corpus is the HDFC Mutual Fund house page, four Direct Growth scheme pages, 
 | `hdfc-flexi-cap` | [HDFC Flexi Cap Direct Plan Growth](https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth). The page slug still says equity fund. |
 | `hdfc-elss` | [HDFC ELSS Tax Saver Fund Direct Plan Growth](https://groww.in/mutual-funds/hdfc-elss-tax-saver-fund-direct-plan-growth) |
 | `hdfc-mid-cap` | [HDFC Mid Cap Fund Direct Growth](https://groww.in/mutual-funds/hdfc-mid-cap-fund-direct-growth) |
-| `groww-help-capital-gains` | [Section 80C help article](https://groww.in/help/my-account/ma-others/where-can-i-get-the-tax-proof-for-section-80c), which states the Mutual Fund capital-gains download steps. |
 
 Scheme answers can quote expense ratio, exit load, minimum SIP, minimum lump sum, lock-in, riskometer, benchmark, investment objective, category, fund managers, holdings, NAV, AUM, launch date, and a published return when that figure is in the cited chunk.
 
@@ -103,5 +102,4 @@ Scheme answers can quote expense ratio, exit load, minimum SIP, minimum lump sum
 | 4 | What is the lock-in on HDFC ELSS Tax Saver Fund Direct Plan Growth? | The lock-in period is 3 years. | [ELSS](https://groww.in/mutual-funds/hdfc-elss-tax-saver-fund-direct-plan-growth) | 2026-11-16 |
 | 5 | What is the exit load of HDFC Mid Cap Fund Direct Growth? | The exit load is 1% if redeemed within 1 year. | [Mid Cap](https://groww.in/mutual-funds/hdfc-mid-cap-fund-direct-growth) | 2026-11-16 |
 | 6 | What is the minimum SIP for HDFC Flexi Cap Direct Plan Growth? | The minimum SIP is ₹100. | [Flexi Cap](https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth) | 2026-11-16 |
-| 7 | How do I download a capital-gains statement on Groww? | Go to your profile, select Reports, find Mutual Fund - Capital Gains under Tax, choose the financial year, and click Download. | [Groww Help](https://groww.in/help/my-account/ma-others/where-can-i-get-the-tax-proof-for-section-80c) | 2026-11-16 |
-| 8 | Should I buy HDFC Flexi Cap? | Refused. The assistant does not say whether to buy, sell, or hold. | [Flexi Cap](https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth) | 2026-11-16 |
+| 7 | Should I buy HDFC Flexi Cap? | Refused. The assistant does not say whether to buy, sell, or hold. | [Flexi Cap](https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth) | 2026-11-16 |
