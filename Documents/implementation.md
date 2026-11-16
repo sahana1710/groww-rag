@@ -1,6 +1,6 @@
 # Implementation
 
-**Groww Mutual Fund Facts Assistant**
+**Mutual Fund Assistant**
 
 | | |
 | --- | --- |
@@ -278,12 +278,12 @@ One page, `web/index.html`, served at `/`. The Stitch screens in `stitch_groww_r
 
 The chat column scrolls. “Choose a scheme” stays fixed above it. The rail, the three questions, the input, and the disclaimer do not move with the thread.
 
-- Left rail: a `#00D09C` rising arrow, then “Mutual Fund” in `#00D09C` and “Knowledge Assistant” in `#171A2C`. The panel control collapses the rail to the logo. “New chat” is left-aligned and clears this tab’s thread. “Recent chats” lists questions newest first. Choosing one scrolls to that turn.
+- Left rail: a `#00D09C` rising arrow, then “Mutual Fund” in `#00D09C` and “Assistant” in `#171A2C`. The panel control collapses the rail to the logo. “New chat” is left-aligned and clears this tab’s thread. “Recent chats” lists questions newest first. Choosing one scrolls to that turn.
 - Empty state, centered: “What would you like to know today?”
 - The user’s question is on the right. The answer, one source link, and the date line are on the left. The bubble does not show a leading “Facts only.”
 - Three questions sit in one row in the chat area, above the input and not inside it. They stay fixed while the thread scrolls. A scheme card includes the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. HDFC AMC Overview uses “About HDFC Mutual Fund?”, the SEBI-approval question, and the CEO question. An X hides one until New chat and does not reveal a fourth. A typed question that does not name a scheme keeps the scheme from the previous question in this chat. The first question in a chat still gets `for {selected scheme}?`. With HDFC AMC Overview selected and no earlier scheme, that suffix is `for the HDFC Mutual Fund fund house?`.
 - “Choose a scheme” is fixed at the top of the chat. The choices are cards, with “HDFC AMC Overview” first, then the four canonical names. A click anywhere on that bar opens the cards. The arrow, or another click on the bar, closes them, and choosing a scheme closes them too. The field placeholder is “Ask Groww”.
-- One centered line under the field, with a warning icon in the same grey: “Facts only. No investment advice. Check the linked page before you act.”
+- Under the field, a warning icon in the same grey lines up with the first line of the notice, and the text sits beside it: “Facts only. No investment advice. Answers are short quotations of public pages on HDFC Mutual Fund schemes (Direct Plan, Growth) and official help or regulator pages. They are not a recommendation to buy, sell, or hold any scheme. Check the linked page before you act.”
 
 Green text, borders, and icons are `#00D09C`. Pale mint fill `#EAF9F5`. Canvas `#F8F8F8`, cards `#FFFFFF`, border `#E9E9EB`, body `#44475B`, secondary text `#7C7E8C`. Type is Inter at 14px for the chat. There is no buy or sell button and no inspector.
 

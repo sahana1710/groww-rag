@@ -1,6 +1,6 @@
 # Architecture
 
-**Groww Mutual Fund Facts Assistant**  
+**Mutual Fund Assistant**  
 Inspectable, single-process RAG prototype
 
 | | |
@@ -589,14 +589,14 @@ The page is a chat. The left rail stays put. The thread scrolls on its own. “C
 
 ### Layout
 
-- **Rail.** The mark is a `#00D09C` arrow that rises, dips once, and points to the upper right. Beside it, “Mutual Fund” is `#00D09C` and “Knowledge Assistant” is `#171A2C`. A square-with-a-bar control collapses the rail to the logo. Clicking the logo opens it again. On a narrow window the logo opens the rail as an overlay. “New chat” is left-aligned. “Recent chats” lists questions from this browser tab, newest first, with no “This tab” line. Choosing one scrolls to that turn. It does not ask again.
+- **Rail.** The mark is a `#00D09C` arrow that rises, dips once, and points to the upper right. Beside it, “Mutual Fund” is `#00D09C` and “Assistant” is `#171A2C`. A square-with-a-bar control collapses the rail to the logo. Clicking the logo opens it again. On a narrow window the logo opens the rail as an overlay. “New chat” is left-aligned. “Recent chats” lists questions from this browser tab, newest first, with no “This tab” line. Choosing one scrolls to that turn. It does not ask again.
 - **Empty chat.** The line “What would you like to know today?” is centered in the chat area.
 - **Thread.** The question sits on the right, in the pale mint fill, with green text. The answer sits on the left, on a white card: the reply, one source link, then the fetch-date line. “Facts only.” is removed from the text shown in the bubble. The API response may still start with that phrase.
 - **Suggested questions.** Three questions in one row, in the chat area, not inside the input. They do not scroll with the thread. Each scheme card names the selected scheme, for example “What is the lock-in period for HDFC ELSS Tax Saver Fund Direct Plan Growth?”. HDFC AMC Overview shows “About HDFC Mutual Fund?”, the SEBI-approval question, and the CEO question. An X removes that question until New chat and does not reveal a fourth. ELSS shows lock-in period, expense ratio, and minimum SIP. Mid Cap and Flexi Cap show exit load, expense ratio, and benchmark. Large Cap shows expense ratio, exit load, and benchmark.
 - **Asking.** A click or a typed question is one `POST /api/ask`. If the text does not already name a scheme, and it is not a capital-gains or fund-house question, the page uses the scheme from the previous question in this chat. When this chat has no scheme yet, it appends `for {selected scheme}?`. With HDFC AMC Overview selected and no earlier scheme, a typed question is sent as `for the HDFC Mutual Fund fund house?`. The bubble shows the words on the card, or the typed words. The thread is kept in `sessionStorage` under `groww-rag-thread`, up to 20 turns. New chat clears that thread and restores the three questions.
 - **Scheme menu.** “Choose a scheme” sits at the top of the chat and does not scroll. The five choices are cards, with “HDFC AMC Overview” first, then the four Direct Growth schemes. A click anywhere on that bar opens the cards. An arrow, or another click on the bar, closes them. Choosing a scheme closes them too. The open and close ease rather than snap. Choosing HDFC AMC Overview asks about the fund house, not one of the four schemes.
 - **Input.** Its own field. Placeholder: “Ask Groww”. The send control uses the same pale mint as New chat.
-- **Disclaimer.** One centered line under the field, not inside it, with a warning icon in the same grey as the words: “Facts only. No investment advice. Check the linked page before you act.”
+- **Disclaimer.** Under the field, not inside it. The warning icon is the same grey as the words and lines up with the first line. The text sits beside it: “Facts only. No investment advice. Answers are short quotations of public pages on HDFC Mutual Fund schemes (Direct Plan, Growth) and official help or regulator pages. They are not a recommendation to buy, sell, or hold any scheme. Check the linked page before you act.”
 
 There is no “How this answer was produced” panel.
 
@@ -611,7 +611,7 @@ The green is `#00D09C`. Pale fills stay `#EAF9F5` so the words sit on a light ca
 | Text | `#171A2C` for Assistant and titles, `#44475B` for body, `#7C7E8C` for the disclaimer and secondary lines |
 | Canvas and card | `#F8F8F8` canvas, `#FFFFFF` card, 1px border `#E9E9EB` |
 | Error | `#EB5B3C` is reserved for an error state. It is not a trade colour |
-| Type | Inter. Chat copy is 14px. “Mutual Fund” is green at weight 700. “Knowledge Assistant” is dark at weight 600 |
+| Type | Inter. Chat copy is 14px. “Mutual Fund” is green at weight 700. “Assistant” is dark at weight 600 |
 
 Motion is a short ease on the rail width and on a new message. It is turned off when the system asks for reduced motion.
 

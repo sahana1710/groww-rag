@@ -1,4 +1,4 @@
-# Mutual Fund Knowledge Assistant
+# Mutual Fund Assistant
 
 A facts-only chat assistant for the HDFC Mutual Fund house page and four HDFC Direct Growth schemes. Pick a scheme, ask in plain English, and get a short answer quoted from a public page, with the source link.
 
@@ -68,6 +68,8 @@ Scheme answers can quote expense ratio, exit load, minimum SIP, minimum lump sum
 | 5 | What is the exit load of HDFC Mid Cap Fund Direct Growth? | The exit load is 1% if redeemed within 1 year. | [Mid Cap](https://groww.in/mutual-funds/hdfc-mid-cap-fund-direct-growth) | 2026-11-16 |
 | 6 | What is the minimum SIP for HDFC Flexi Cap Direct Plan Growth? | The minimum SIP is ₹100. | [Flexi Cap](https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth) | 2026-11-16 |
 | 7 | Should I buy HDFC Flexi Cap? | Refused. The assistant does not say whether to buy, sell, or hold. | [Flexi Cap](https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth) | 2026-11-16 |
+
+Repository: https://github.com/sahana1710/mutual-fund-assistant-rag
 
 ## Setup
 

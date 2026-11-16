@@ -1,5 +1,5 @@
 [project]
-name = "groww-rag"
+name = "mutual-fund-assistant-rag"
 version = "1.0.0"
 description = "Facts-only assistant for four HDFC Mutual Fund Direct Growth schemes"
 requires-python = ">=3.12"
