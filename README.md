@@ -25,7 +25,7 @@ The same disclaimer is always visible on the page.
 
 ## Scope
 
-The corpus is the HDFC Mutual Fund house page, four Direct Growth scheme pages, and one Groww Help article. `sources/sources.csv` lists those six URLs. The scraper fetches nothing else. Figures are whatever those pages said on the fetch date. They are not constants in code. The current fetch date is 2026-11-16.
+The corpus is the HDFC Mutual Fund house page, four Direct Growth scheme pages, and one Groww Help article. `sources/sources.csv` lists those URLs. The scraper fetches nothing else. Figures are whatever those pages said on the fetch date. They are not constants in code. The current fetch date is 2026-11-16.
 
 | id | Page |
 | --- | --- |
